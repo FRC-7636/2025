@@ -1,11 +1,16 @@
 {
+  "location": {
+    "front": -7,
+    "left": -7
+  },
+  "absoluteEncoderOffset": 246.0058,
   "drive": {
-    "type": "talonfx",
+    "type": "krakenx60foc",
     "id": 3,
     "canbus": null
   },
   "angle": {
-    "type": "talonfx",
+    "type": "krakenx60foc",
     "id": 13,
     "canbus": null
   },
@@ -15,12 +20,8 @@
     "canbus": null
   },
   "inverted": {
-    "drive": true,
+    "drive": false,
     "angle": false
   },
-  "absoluteEncoderOffset": -67,
-  "location": {
-    "front": -7,
-    "left": -7
-  }
+  "absoluteEncoderInverted": false
 }

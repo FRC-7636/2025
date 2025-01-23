@@ -116,7 +116,7 @@ public class AbsoluteDriveAdv extends Command
       resetHeading = false;
     }
 
-    ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(), headingX, headingY);
+    ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble()*20, vY.getAsDouble()*20, headingX, headingY);
 
     // Limit velocity to prevent tippy
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
@@ -126,6 +126,7 @@ public class AbsoluteDriveAdv extends Command
     SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", translation.toString());
 
+
     // Make the robot move
     if (headingX == 0 && headingY == 0 && Math.abs(headingAdjust.getAsDouble()) > 0)
     {
@@ -133,7 +134,7 @@ public class AbsoluteDriveAdv extends Command
       swerve.drive(translation, (Constants.OperatorConstants.TURN_CONSTANT * -headingAdjust.getAsDouble()), true);
     } else
     {
-      swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true);
+      swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond*9, true);
     }
   }
 

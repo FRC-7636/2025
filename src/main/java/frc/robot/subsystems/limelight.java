@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Rotation;
 
 import java.util.Optional;
@@ -47,14 +48,6 @@ public class limelight extends SubsystemBase{
         return LimelightHelpers.getBotPose2d("").getRotation().getDegrees();
     }    
 
-    // public int getID(){
-    //     if (aprilTag != -1 ){
-    //         aprilTag = (int) LimelightHelpers.getFiducialID("");
-    //         return aprilTag;
-    //     }
-    //     return aprilTag;
-    // }
-
     public static Pose2d getAprilTagPose(Transform2d robotOffset){
         if (aprilTag != -1 ){
             aprilTag = (int) LimelightHelpers.getFiducialID("");
@@ -67,9 +60,9 @@ public class limelight extends SubsystemBase{
             return aprilTagPose3d.get().toPose2d().transformBy(robotOffset);
         }
         else{
-                //   throw new RuntimeException("Cannot get AprilTag " + aprilTag + " from field " + aprilTagFieldLayout.toString());
-                tag = false;
-                return null;
+            //   throw new RuntimeException("Cannot get AprilTag " + aprilTag + " from field " + aprilTagFieldLayout.toString());
+            tag = false;
+            return null;
       }
     }
 
@@ -78,8 +71,7 @@ public class limelight extends SubsystemBase{
         getRobotPose();
         robotToTarget();
         deltaRobotHeadingDeg();
-        getAprilTagPose(null);
-
+        SmartDashboard.putNumber("RY", LimelightHelpers.getTargetPose3d_CameraSpace("").getRotation().getY()*57.3);
         field2d.setRobotPose(getRobotPose().toPose2d());
         SmartDashboard.putData("field2d", field2d);
         // SmartDashboard.putNumber("Robot_Heading_Degree", deltaRobotHeadingDeg());

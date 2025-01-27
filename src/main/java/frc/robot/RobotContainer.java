@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.auto.AutoDrive;
 import frc.robot.commands.auto.AutoDriveToBarge;
+import frc.robot.commands.auto.Reef;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.limelight;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -135,6 +136,7 @@ public class RobotContainer {
 
   private final AutoDriveToBarge autoDriveToBarge = new AutoDriveToBarge(drivebase, limelight);
   private final AutoDrive autoDrive = new AutoDrive(drivebase, limelight);
+  private final Reef reef = new Reef(drivebase, limelight);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -160,8 +162,10 @@ public class RobotContainer {
    */
   private void configureBindings() {
     // new JoystickButton(test, 1).whileTrue(autoDriveToBarge);
-    new CommandXboxController(0).button(1).onTrue(autoDriveToBarge);
-    new CommandXboxController(0).button(2).onTrue(autoDrive);
+    new CommandXboxController(0).button(1).whileTrue(autoDriveToBarge);
+    new CommandXboxController(0).button(2).whileTrue(autoDrive);
+
+    new CommandXboxController(0).button(3).onTrue(reef);
 
     // (Condition) ? Return-On-True : Return-on-False
     drivebase.setDefaultCommand(

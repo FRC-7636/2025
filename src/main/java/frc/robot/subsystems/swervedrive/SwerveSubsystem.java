@@ -19,6 +19,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -36,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
 import java.io.IOException;
@@ -141,6 +143,17 @@ public class SwerveSubsystem extends SubsystemBase
                                   new Pose2d(new Translation2d(Meter.of(2), 
                                                                Meter.of(0)),
                                                                Rotation2d.fromDegrees(0)));
+  }
+
+  public void aim() {
+    PIDController controller = new PIDController(1, 0, 0);
+    controller.enableContinuousInput(-Math.PI, Math.PI);
+    double val = LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY();
+    while(Math.abs(val) > 1) {
+      drive(new Translation2d(0, 0), controller.calculate(val), false);
+    }
+
+    controller.close();
   }
 
   /**

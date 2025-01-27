@@ -22,7 +22,6 @@ import swervelib.math.SwerveMath;
  */
 public class AbsoluteDriveAdv extends Command
 {
-
   private final SwerveSubsystem swerve;
   private final DoubleSupplier  vX, vY;
   private final DoubleSupplier  headingAdjust;
@@ -126,7 +125,6 @@ public class AbsoluteDriveAdv extends Command
     SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", translation.toString());
 
-
     // Make the robot move
     if (headingX == 0 && headingY == 0 && Math.abs(headingAdjust.getAsDouble()) > 0)
     {
@@ -150,6 +148,5 @@ public class AbsoluteDriveAdv extends Command
   {
     return false;
   }
-
 
 }

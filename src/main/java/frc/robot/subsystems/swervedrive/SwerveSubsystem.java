@@ -256,13 +256,12 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return {@link Rotation2d} of which you need to achieve.
    */
-  public Rotation2d getSpeakerYaw()
-  {
-    int allianceAprilTag = DriverStation.getAlliance().get() == Alliance.Blue ? 7 : 4;
-    // Taken from PhotonUtils.getYawToPose()
-    Pose3d        speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
-    Translation2d relativeTrl         = speakerAprilTagPose.toPose2d().relativeTo(getPose()).getTranslation();
-    return new Rotation2d(relativeTrl.getX(), relativeTrl.getY()).plus(swerveDrive.getOdometryHeading());
+  public Rotation2d getSpeakerYaw(){
+      int allianceAprilTag = DriverStation.getAlliance().get() == Alliance.Blue ? 7 : 4;
+      // Taken from PhotonUtils.getYawToPose()
+      Pose3d speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
+      Translation2d relativeTrl = speakerAprilTagPose.toPose2d().relativeTo(getPose()).getTranslation();
+      return new Rotation2d(relativeTrl.getX(), relativeTrl.getY()).plus(swerveDrive.getOdometryHeading());
   }
 
   /**
@@ -271,8 +270,7 @@ public class SwerveSubsystem extends SubsystemBase
    * @param tolerance Tolerance in degrees.
    * @return Command to turn the robot to the speaker.
    */
-  public Command aimAtSpeaker(double tolerance)
-  {
+  public Command aimAtSpeaker(double tolerance){
     SwerveController controller = swerveDrive.getSwerveController();
     return run(
         () -> {

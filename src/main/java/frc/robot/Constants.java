@@ -16,8 +16,7 @@ import swervelib.math.Matter;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-public final class Constants
-{
+public final class Constants{
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(26)), ROBOT_MASS);
@@ -25,27 +24,48 @@ public final class Constants
   public static final double MAX_SPEED  = Units.feetToMeters(16.5);
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 
-//  public static final class AutonConstants
-//  {
-//
-//    public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
-//    public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
-//  }
+  public static final class AutonConstants{
+    //  public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
+    //  public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
+  }
 
-  public static final class DrivebaseConstants
-  {
-
+  public static final class DrivebaseConstants {
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
 
-  public static class OperatorConstants
-  {
-
+  public static class OperatorConstants {
     // Joystick Deadband
-    public static final double DEADBAND        = 0.05;
+    public static final double DEADBAND        = 0.1;
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
+    
     public static final double TURN_CONSTANT    = 6;
+  }
+
+  // Auto Drive PIDF
+  public static class AutoDrivePIDF {
+    public static final double P = 3; //4.5;
+    public static final double I = 0.00;
+    public static final double D = 0;
+    public static final double I_ZONE = 0;
+  }
+
+  // Autp Turn PIDF
+  public static class AutoTurnPIDF {
+    public static final double P = 8;  //13;
+    public static final double I = 0.0;
+    public static final double D = 0.00;
+    public static final double I_ZONE = 0.0;
+  }
+
+  // Elevator ID
+  public static class ElevatorConstants {
+    public static final int LeftMotor_ID = 21;
+    public static final int RightMotor_ID = 22;
+  }
+
+  public static class LimelightConstants{
+    public static final String Name = "limelight";
   }
 }

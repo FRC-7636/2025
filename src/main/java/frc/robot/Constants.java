@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import swervelib.math.Matter;
 
 /**
@@ -18,23 +19,24 @@ import swervelib.math.Matter;
  */
 public final class Constants{
 
-  public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
-  public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(26)), ROBOT_MASS);
-  public static final double LOOP_TIME  = 0.02; //s, 20ms + 110ms sprk max velocity lag
-  public static final double MAX_SPEED  = Units.feetToMeters(16.5);
-  // Maximum speed of the robot in meters per second, used to limit acceleration.
+    public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
+    public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(26)), ROBOT_MASS);
+    public static final double LOOP_TIME  = 0.02; //s, 20ms + 110ms sprk max velocity lag
+    public static final double MAX_SPEED  = Units.feetToMeters(16.5);
+    // Maximum speed of the robot in meters per second, used to limit acceleration.
 
   public static final class AutonConstants{
-    //  public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
-    //  public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
+      //  public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
+      //  public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
   }
 
-  public static final class DrivebaseConstants {
-    // Hold time on motor brakes when disabled
-    public static final double WHEEL_LOCK_TIME = 10; // seconds
+  public static final class DrivebaseConstants{
+      // Hold time on motor brakes when disabled
+      public static final double WHEEL_LOCK_TIME = 10; // seconds
   }
 
-  public static class OperatorConstants {
+  public static class OperatorConstants{
+    
     // Joystick Deadband
     public static final double DEADBAND        = 0.1;
     public static final double LEFT_Y_DEADBAND = 0.1;
@@ -43,29 +45,52 @@ public final class Constants{
     public static final double TURN_CONSTANT    = 6;
   }
 
-  // Auto Drive PIDF
-  public static class AutoDrivePIDF {
-    public static final double P = 3; //4.5;
-    public static final double I = 0.00;
-    public static final double D = 0;
-    public static final double I_ZONE = 0;
-  }
+  // Auto Constants
+  public static class AutoConstants{
+    
+      // Auto Drive PIDF
+      public static class AutoDrivePIDF{
+          public static final double P = 3; //4.5;
+          public static final double I = 0.00;
+          public static final double D = 0;
+          public static final double I_ZONE = 0;
+      }
+    
+      // Auto Turn PIDF
+      public static class AutoTurnPIDF{
+          public static final double P = 8;  //13;
+          public static final double I = 0.0;
+          public static final double D = 0.00;
+          public static final double I_ZONE = 0.0;
+      }
 
-  // Autp Turn PIDF
-  public static class AutoTurnPIDF {
-    public static final double P = 8;  //13;
-    public static final double I = 0.0;
-    public static final double D = 0.00;
-    public static final double I_ZONE = 0.0;
   }
-
-  // Elevator ID
-  public static class ElevatorConstants {
-    public static final int LeftMotor_ID = 21;
-    public static final int RightMotor_ID = 22;
-  }
-
+  
   public static class LimelightConstants{
-    public static final String Name = "limelight";
+      public static final String Name = "limelight";
   }
+
+  // Subsystems Constants.
+
+  // Elevator Constants
+  public static class ElevatorConstants{
+      // Elevator ID
+      public static final int LeftMotor_ID = 21;
+      public static final int RightMotor_ID = 22;
+
+      // Elevator Config
+      public static final boolean LeftMotor_Inverted = false;
+      public static final boolean RightMotor_Inverted = false;
+
+      public static final double MAX_ACCEL = 0;
+      public static final double MAX_VELOCITY = 0;
+
+      // Elevator PIDF
+      public static final double P = 0;
+      public static final double I = 0;
+      public static final double D = 0;
+      public static final double F = 0;
+  }
+
+  
 }

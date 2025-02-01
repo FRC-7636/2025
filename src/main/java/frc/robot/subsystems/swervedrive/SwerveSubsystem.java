@@ -31,6 +31,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -39,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -58,9 +60,8 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
-public class SwerveSubsystem extends SubsystemBase
-{
-
+public class SwerveSubsystem extends SubsystemBase{
+  public double val;
   /**
    * Swerve drive object.
    */
@@ -82,8 +83,7 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @param directory Directory of swerve drive config files.
    */
-    public SwerveSubsystem(File directory)
-    {
+    public SwerveSubsystem(File directory){
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     //  The encoder resolution per motor revolution is 1 per motor revolution.
@@ -100,18 +100,17 @@ public class SwerveSubsystem extends SubsystemBase
 
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
-    try
-    {
+    try{
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED,
                                                                   new Pose2d(new Translation2d(Meter.of(1),
                                                                                                Meter.of(4)),
                                                                                                Rotation2d.fromDegrees(0)));
       // Alternative method if you don't want to supply the conversion factor via JSON files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
-    } catch (Exception e)
-    {
+    } catch (Exception e){
       throw new RuntimeException(e);
     }
+    
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
     swerveDrive.setCosineCompensator(true);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(true,
@@ -120,8 +119,7 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setModuleEncoderAutoSynchronize(false,
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
-    if (visionDriveTest)
-    {
+    if (visionDriveTest){
       setupPhotonVision();
       // Stop the odometry thread if we are using vision that way we can synchronize updates better.
       swerveDrive.stopOdometryThread();
@@ -146,50 +144,45 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public void aim() {
-    PIDController controller = new PIDController(1, 0, 0);
+    PIDController controller = new PIDController(2, 0, 0);
     controller.enableContinuousInput(-Math.PI, Math.PI);
-    double val = LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY();
-    while(Math.abs(val) > 1) {
-      drive(new Translation2d(0, 0), controller.calculate(val), false);
+    val = LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY();
+        while(Math.abs(val) > 1) {
+        drive(new Translation2d(0, 0), controller.calculate(val), false);
     }
-
     controller.close();
   }
 
   /**
    * Setup the photon vision class.
    */
-  public void setupPhotonVision()
-  {
-    vision = new Vision(swerveDrive::getPose, swerveDrive.field);
+  public void setupPhotonVision(){
+    vision = new Vision();
   }
 
   @Override
-  public void periodic()
-  {
+  public void periodic(){
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest)
     {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
     }
+    SmartDashboard.putNumber("RY", val);
   }
 
   @Override
-  public void simulationPeriodic()
-  {
+  public void simulationPeriodic(){
   }
 
   /**
    * Setup AutoBuilder for PathPlanner.
    */
-  public void setupPathPlanner()
-  {
+  public void setupPathPlanner(){
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
     RobotConfig config;
-    try
-    {
+    try{
       config = RobotConfig.fromGUISettings();
 
       final boolean enableFeedforward = true;
@@ -256,8 +249,7 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return Distance to speaker in meters.
    */
-  public double getDistanceToSpeaker()
-  {
+  public double getDistanceToSpeaker(){
     int allianceAprilTag = DriverStation.getAlliance().get() == Alliance.Blue ? 7 : 4;
     // Taken from PhotonUtils.getDistanceToPose
     Pose3d speakerAprilTagPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
@@ -410,13 +402,10 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return SysId Drive Command
    */
-  public Command sysIdDriveMotorCommand()
-  {
+  public Command sysIdDriveMotorCommand(){
     return SwerveDriveTest.generateSysIdCommand(
-      SwerveDriveTest.setDriveSysIdRoutine(
-      new Config(),
-      this, swerveDrive, 12),
-      3.0, 5.0, 3.0);
+      SwerveDriveTest.setDriveSysIdRoutine(new Config(), this, swerveDrive, 12, true),
+                                           3.0, 5.0, 3.0);
   }
 
   /**
@@ -424,13 +413,9 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return SysId Angle Command
    */
-  public Command sysIdAngleMotorCommand()
-  {
-    return SwerveDriveTest.generateSysIdCommand(
-        SwerveDriveTest.setAngleSysIdRoutine(
-        new Config(),
-        this, swerveDrive),
-        3.0, 5.0, 3.0);
+  public Command sysIdAngleMotorCommand(){
+    return SwerveDriveTest.generateSysIdCommand(SwerveDriveTest.setAngleSysIdRoutine(new Config(), this, swerveDrive),
+                                                3.0, 5.0, 3.0);
   }
 
   /**
@@ -438,8 +423,7 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return a Command that centers the modules of the SwerveDrive subsystem
    */
-  public Command centerModulesCommand()
-  {
+  public Command centerModulesCommand(){
     return run(() -> Arrays.asList(swerveDrive.getModules())
                            .forEach(it -> it.setAngle(0.0)));
   }
@@ -451,8 +435,7 @@ public class SwerveSubsystem extends SubsystemBase
    * @param speedInMetersPerSecond the speed at which to drive in meters per second
    * @return a Command that drives the swerve drive to a specific distance at a given speed
    */
-  public Command driveToDistanceCommand(double distanceInMeters, double speedInMetersPerSecond)
-  {
+  public Command driveToDistanceCommand(double distanceInMeters, double speedInMetersPerSecond){
     return run(() -> drive(new ChassisSpeeds(speedInMetersPerSecond, 0, 0)))
         .until(() -> swerveDrive.getPose().getTranslation().getDistance(new Translation2d(0, 0)) >
                      distanceInMeters);
@@ -465,8 +448,7 @@ public class SwerveSubsystem extends SubsystemBase
    * @param kV the velocity gain of the feedforward
    * @param kA the acceleration gain of the feedforward
    */
-  public void replaceSwerveModuleFeedforward(double kS, double kV, double kA)
-  {
+  public void replaceSwerveModuleFeedforward(double kS, double kV, double kA){
     swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(kS, kV, kA));
   }
 
@@ -478,8 +460,7 @@ public class SwerveSubsystem extends SubsystemBase
    * @param angularRotationX Angular velocity of the robot to set. Cubed for smoother controls.
    * @return Drive command.
    */
-  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
-  {
+  public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX){
     return run(() -> {
       // Make the robot move
       swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
@@ -532,8 +513,7 @@ public class SwerveSubsystem extends SubsystemBase
    *                      relativity.
    * @param fieldRelative Drive mode.  True for field-relative, false for robot-relative.
    */
-  public void drive(Translation2d translation, double rotation, boolean fieldRelative)
-  {
+  public void drive(Translation2d translation, double rotation, boolean fieldRelative){
     swerveDrive.drive(translation,
                       rotation,
                       fieldRelative,
@@ -545,8 +525,7 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @param velocity Velocity according to the field.
    */
-  public void driveFieldOriented(ChassisSpeeds velocity)
-  {
+  public void driveFieldOriented(ChassisSpeeds velocity){
     swerveDrive.driveFieldOriented(velocity);
   }
 

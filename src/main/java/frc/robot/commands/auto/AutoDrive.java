@@ -1,4 +1,4 @@
-package frc.robot.commands.auto;
+package frc.robot.commands.Auto;
 
 import javax.xml.crypto.KeySelector.Purpose;
 
@@ -24,9 +24,13 @@ public class AutoDrive extends Command{
     private boolean stop;
     private boolean stop2;
 
-    private PIDController driveCtrl = new PIDController(Constants.AutoDrivePIDF.P, Constants.AutoDrivePIDF.I, Constants.AutoDrivePIDF.D);
-    private PIDController turnCtrl = new PIDController(Constants.AutoTurnPIDF.P, Constants.AutoTurnPIDF.I, Constants.AutoTurnPIDF.D);
-    
+    private PIDController driveCtrl = new PIDController(Constants.AutoConstants.AutoDrivePIDF.P, 
+                                                        Constants.AutoConstants.AutoDrivePIDF.I, 
+                                                        Constants.AutoConstants.AutoDrivePIDF.D);
+private PIDController turnCtrl = new PIDController(Constants.AutoConstants.AutoTurnPIDF.P, 
+                                                   Constants.AutoConstants.AutoTurnPIDF.I, 
+                                                   Constants.AutoConstants.AutoTurnPIDF.D);
+
     public AutoDrive(SwerveSubsystem swerve, limelight limelight) {
         this.swerve = swerve;
         this.limelight = limelight;

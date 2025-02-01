@@ -11,24 +11,36 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.auto.AutoDrive;
-import frc.robot.commands.auto.AutoDriveToBarge;
-import frc.robot.commands.auto.Reef;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+
+import frc.robot.commands.Auto.AutoDrive;
+import frc.robot.commands.Auto.AutoDriveToBarge;
+import frc.robot.commands.Auto.Reef;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
+import frc.robot.subsystems.Algae;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Coral;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.limelight;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 
 import java.io.File;
 import java.util.function.Supplier;
+
+import javax.xml.crypto.KeySelector.Purpose;
+
+import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 
 import swervelib.SwerveInputStream;
 
@@ -41,37 +53,45 @@ import swervelib.SwerveInputStream;
  * trigger mappings) should be declared here.
  */
 
-public class RobotContainer {
-
-  private limelight limelight = new limelight();
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  final CommandXboxController driverXbox = new CommandXboxController(0);
+public class RobotContainer{
+  // Controllers
+  private final CommandXboxController driverXbox = new CommandXboxController(0);
   private final XboxController test = new XboxController(1);
   private CommandXboxController testCtrl = new CommandXboxController(2);
-  // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(
-      new File(Filesystem.getDeployDirectory(), "swerve/falcon"));
-  // Applies deadbands and inverts controls because joysticks
-  // are back-right positive while robot
-  // controls are front-left positive
-  // left stick controls translation
-  // right stick controls the rotational velocity
-  // buttons are quick rotation positions to different ways to face
-  // WARNING: default buttons are on the same buttons as the ones defined in
-  // configureBindings
+  private final PS5Controller PS5 = new PS5Controller(3);
+  
+  // Subsystems
+  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/falcon"));
+  private final Vision vision = new Vision();
+  private final Algae algae = new Algae();
+  private final Climber climber = new Climber();
+  private final Coral coral = new Coral();
+  private final Elevator elevator = new Elevator();
+  private final limelight limelight = new limelight();
+  
+  // Applies deadbands and inverts controls because joysticks are back-right positive while robot controls are front-left positive.
+  // left stick controls translation, right stick controls the rotational velocity, buttons are quick rotation positions to different ways to face.
+  // WARNING: default buttons are on the same buttons as the ones defined in configureBindings.
+  // AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
+  //                                                               () -> -MathUtil.applyDeadband(PS5.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+  //                                                               () -> -MathUtil.applyDeadband(PS5.getLeftX(), OperatorConstants.DEADBAND),
+  //                                                               () -> -MathUtil.applyDeadband(PS5.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+  //                                                               () -> PS5.getRawButton(4),
+  //                                                               () -> PS5.getRawButton(2),
+  //                                                               () -> PS5.getRawButton(1),
+  //                                                               () -> PS5.getRawButton(3)
+  //                                                               );        
   AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
-      () -> -MathUtil.applyDeadband(driverXbox.getLeftY(),
-          OperatorConstants.LEFT_Y_DEADBAND),
-      () -> -MathUtil.applyDeadband(driverXbox.getLeftX(),
-          OperatorConstants.DEADBAND),
-      () -> -MathUtil.applyDeadband(driverXbox.getRightX(),
-          OperatorConstants.RIGHT_X_DEADBAND),
-      driverXbox.getHID()::getYButtonPressed,
-      driverXbox.getHID()::getAButtonPressed,
-      driverXbox.getHID()::getXButtonPressed,
-      driverXbox.getHID()::getBButtonPressed);
+                                                                () -> -MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+                                                                () -> -MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.DEADBAND),
+                                                                () -> -MathUtil.applyDeadband(driverXbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+                                                                () -> driverXbox.getHID().getYButtonPressed(),
+                                                                () -> driverXbox.getHID().getAButtonPressed(),
+                                                                () -> driverXbox.getHID().getXButtonPressed(),
+                                                                () -> driverXbox.getHID().getBButtonPressed()
+                                                                );        
 
-  /**
+                                                                /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled
    * by angular velocity.
    */
@@ -103,18 +123,12 @@ public class RobotContainer {
   //   test.getRightX() * 1
   // );
 
-  // Applies deadbands and inverts controls because joysticks
-  // are back-right positive while robot
-  // controls are front-left positive
-  // left stick controls translation
-  // right stick controls the desired angle NOT angular rotation
+  // Applies deadbands and inverts controls because joysticks are back-right positive while robot controls are front-left positive
+  // left stick controls translation, right stick controls the desired angle NOT angular rotation
   Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(fieldRelativeSpeeds);
 
-  // Applies deadbands and inverts controls because joysticks
-  // are back-right positive while robot
-  // controls are front-left positive
-  // left stick controls translation
-  // right stick controls the angular velocity of the robot
+  // Applies deadbands and inverts controls because joysticks are back-right positive while robot controls are front-left positive
+  // left stick controls translation, right stick controls the angular velocity of the robot
   Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
 
   Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
@@ -127,20 +141,17 @@ public class RobotContainer {
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
   // Derive the heading axis with math!
-    SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
-                                           .withControllerHeadingAxis(() -> Math.sin(test.getRawAxis(2) * Math.PI) * (Math.PI * 2),
-                                                                      () -> Math.cos(test.getRawAxis(2) * Math.PI) * (Math.PI * 2)).headingWhile(true);
+  SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
+                                           .withControllerHeadingAxis(() -> Math.sin(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2),
+                                                                      () -> Math.cos(driverXbox.getRawAxis(2) * Math.PI) * (Math.PI * 2)).headingWhile(true);
   Command driveFieldOrientedDirectAngleSim = drivebase.driveFieldOriented(driveDirectAngleSim);
 
   Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleSim);
 
   private final AutoDriveToBarge autoDriveToBarge = new AutoDriveToBarge(drivebase, limelight);
   private final AutoDrive autoDrive = new AutoDrive(drivebase, limelight);
-  private final Reef reef = new Reef(drivebase, limelight);
+  private final Reef reef = new Reef(drivebase, limelight, vision);
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
@@ -210,9 +221,7 @@ public class RobotContainer {
     return new AutoDrive(drivebase, limelight);
   }
 
-  public void setDriveMode()
-
-  {
+  public void setDriveMode() {
     configureBindings();
   }
 

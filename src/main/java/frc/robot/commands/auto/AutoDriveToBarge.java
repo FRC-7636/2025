@@ -1,4 +1,4 @@
-package frc.robot.commands.auto;
+package frc.robot.commands.Auto;
 
 import org.opencv.core.Mat;
 
@@ -17,8 +17,12 @@ import frc.robot.subsystems.limelight;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class AutoDriveToBarge extends SequentialCommandGroup {
-    private PIDController driveCtrl = new PIDController(Constants.AutoDrivePIDF.P, Constants.AutoDrivePIDF.I, Constants.AutoDrivePIDF.D);
-    private PIDController turnCtrl = new PIDController(Constants.AutoTurnPIDF.P, Constants.AutoTurnPIDF.I, Constants.AutoTurnPIDF.D);
+    private PIDController driveCtrl = new PIDController(Constants.AutoConstants.AutoDrivePIDF.P, 
+                                                        Constants.AutoConstants.AutoDrivePIDF.I, 
+                                                        Constants.AutoConstants.AutoDrivePIDF.D);
+    private PIDController turnCtrl = new PIDController(Constants.AutoConstants.AutoTurnPIDF.P, 
+                                                       Constants.AutoConstants.AutoTurnPIDF.I, 
+                                                       Constants.AutoConstants.AutoTurnPIDF.D);
 
     public AutoDriveToBarge(SwerveSubsystem swerve, limelight limelight){
         Pose2d BotPose = LimelightHelpers.getBotPose2d_wpiBlue("");

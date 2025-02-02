@@ -115,6 +115,20 @@ public class Vision extends SubsystemBase{
       }
   }
 
+  public Pose2d getTagPose(){
+    int aprilTag = (int) LimelightHelpers.getFiducialID("");
+    if(aprilTag != -1){
+      Optional<Pose3d> aprilTagPose3d = fieldLayout.getTagPose(aprilTag);
+      Transform2d robotOffset = new Transform2d();
+      if (aprilTagPose3d.isPresent()){
+          return aprilTagPose3d.get().toPose2d().transformBy(robotOffset);
+      }
+      else{
+          throw new RuntimeException("Cannot get AprilTag " + aprilTag + " from field " + fieldLayout.toString());
+      }
+    }
+    return new Pose2d();
+}
   /**
    * Update the pose estimation inside of {@link SwerveDrive} with all of the given poses.
    *

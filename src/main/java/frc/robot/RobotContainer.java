@@ -58,7 +58,7 @@ import swervelib.SwerveInputStream;
 
 public class RobotContainer{
   // Controllers
-  private final CommandXboxController driverXbox = new CommandXboxController(0);
+  // private final CommandXboxController driverXbox = new CommandXboxController(0);
   private final XboxController test = new XboxController(1);
   private CommandXboxController testCtrl = new CommandXboxController(2);
   private final PS5Controller PS5 = new PS5Controller(3);
@@ -176,12 +176,12 @@ public class RobotContainer{
    * Flight joysticks}.
    */
   private void configureBindings() {
-    new CommandXboxController(0).button(1).whileTrue(autoDriveToBarge);
-    new CommandXboxController(0).button(2).whileTrue(autoDrive);
-    new CommandXboxController(0).button(3).onTrue(reef);
+    // new CommandXboxController(0).button(1).whileTrue(autoDriveToBarge);
+    // new CommandXboxController(0).button(2).whileTrue(autoDrive);
+    // new CommandXboxController(0).button(3).onTrue(reef);
 
     new JoystickButton(test, 1).whileTrue(new InstantCommand(drivebase::aim));
-    new JoystickButton(test, 2).onTrue(reef);
+    new JoystickButton(test, 2).whileTrue(reef2);
     
     new JoystickButton(test, 3).onTrue(autoDrive);
     new JoystickButton(test, 4).whileTrue(new InstantCommand(() -> drivebase.driveToPose(new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))));
@@ -206,16 +206,21 @@ public class RobotContainer{
     //   driverXbox.leftBumper().onTrue(Commands.none());
     //   driverXbox.rightBumper().onTrue(Commands.none());
     // } else {
-    //   driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    //   driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      // driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      // driverXbox.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
       // driverXbox.b().whileTrue(
       //     drivebase.driveToPose(
       //         new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-    //   driverXbox.y().whileTrue(drivebase.aimAtSpeaker(2));
-    //   driverXbox.start().whileTrue(Commands.none());
-    //   driverXbox.back().whileTrue(Commands.none());
-    //   driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-    //   driverXbox.rightBumper().onTrue(Commands.none());
+      // driverXbox.y().whileTrue(drivebase.aimAtSpeaker(2));
+      // driverXbox.start().whileTrue(Commands.none());
+      // driverXbox.back().whileTrue(Commands.none());
+      // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      // driverXbox.rightBumper().onTrue(Commands.none());
+      new JoystickButton(test, 5).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+        // drivebase.driveToPose(
+      new JoystickButton(test, 6).whileTrue(drivebase.driveToPose(((vision.getTagPose()))));
+
+            
     // }
   }
 
@@ -228,7 +233,8 @@ public class RobotContainer{
     // An example command will be run in autonomous
     // return drivebase.getAutonomousCommand("New Auto");
     // return new AutoDriveToBarge(drivebase, limelight);
-    return new AutoDrive(drivebase, limelight);
+    // return new AutoDrive(drivebase, limelight);
+    return null;
   }
 
   public void setDriveMode() {

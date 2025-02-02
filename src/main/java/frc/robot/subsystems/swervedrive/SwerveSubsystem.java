@@ -74,7 +74,7 @@ public class SwerveSubsystem extends SubsystemBase{
   /**
    * AprilTag field layout.
    */
-  private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
+  private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
   /**
    * Enable vision odometry updates while driving.
    */
@@ -117,8 +117,8 @@ public class SwerveSubsystem extends SubsystemBase{
     }
     
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
-    swerveDrive.setCosineCompensator(true);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
-    swerveDrive.setAngularVelocityCompensation(true,
+    swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
+    swerveDrive.setAngularVelocityCompensation(false,
                                                true,
                                                0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(false,
@@ -153,7 +153,7 @@ public class SwerveSubsystem extends SubsystemBase{
     controller.enableContinuousInput(-Math.PI, Math.PI);
     val = LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY();
         while(Math.abs(val) > 1) {
-        drive(new Translation2d(1, 1), controller.calculate(val), false);
+        drive(new Translation2d(4, 4), controller.calculate(val), false);
         reef = true;
         }
     controller.close();
@@ -162,6 +162,38 @@ public class SwerveSubsystem extends SubsystemBase{
   public void setHead() {
     swerveDrive.setGyro(new Rotation3d(0, 0, Math.PI));
   }
+
+  public Command aimAt(double tolerance){
+    SwerveController controller = swerveDrive.getSwerveController();
+    // PIDController pidController = new PIDController(5, 0, 0);
+    return run(
+        () -> {
+          ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(5, 5,
+                                                                       controller.headingCalculate(getHeading().getRadians(),
+                                                                               getReefYaw().getRadians()),
+                                                                               getHeading());
+                                                                               drive(speeds);
+        }).until(() -> Math.abs(getReefYaw().minus(getHeading()).getDegrees()) < tolerance);
+  }
+
+  public Rotation2d getReefYaw(){
+    if (LimelightHelpers.getFiducialID("") != 0){
+      int allianceAprilTag = (int) LimelightHelpers.getFiducialID("");
+      Pose3d ReefPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
+      Translation2d relativeTrl = ReefPose.toPose2d().relativeTo(getPose()).getTranslation();
+      if(ReefPose != null && relativeTrl != null){
+      SmartDashboard.putNumber("2dX", relativeTrl.getX());
+      return new Rotation2d(relativeTrl.getX(), relativeTrl.getY()).plus(swerveDrive.getOdometryHeading());
+      }
+    }
+    return new Rotation2d();
+  }
+
+  public Command aimTarget(){
+    return run(() -> {if (LimelightHelpers.getFiducialID("") != 0){
+                            drive(getTargetSpeeds(0, 0, Rotation2d.fromDegrees(LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY()))); // Not sure if this will work, more math may be required.
+                      }});
+    }
 
   /**
    * Setup the photon vision class.
@@ -189,9 +221,12 @@ public class SwerveSubsystem extends SubsystemBase{
     }
     SmartDashboard.putNumber("RY", val);
     SmartDashboard.putBoolean("reef", reef);
-
+    if (LimelightHelpers.getFiducialID("") != 0){
+    aimAt(1);
+    // getReefYaw();
     getYaw();
     getYawAfter();
+    }
     SmartDashboard.putNumber("yaw", yaw);
     SmartDashboard.putNumber("after", yawafter);
   }
@@ -304,7 +339,7 @@ public class SwerveSubsystem extends SubsystemBase{
     SwerveController controller = swerveDrive.getSwerveController();
     return run(
         () -> {
-          ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0,
+          ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(20, 20,
                                                                        controller.headingCalculate(getHeading().getRadians(),
                                                                                getSpeakerYaw().getRadians()),
                                                                                getHeading());

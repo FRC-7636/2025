@@ -17,14 +17,17 @@ import swervelib.SwerveInputStream;
 public class Reef extends SequentialCommandGroup{
 
     PIDController controller = new PIDController(1, 0, 0);
+    boolean stop;
     
-
     public Reef(SwerveSubsystem swerve, limelight limelight, Vision vision){
         addRequirements(swerve);
         addCommands(Commands.runOnce(() -> controller.enableContinuousInput(-Math.PI, Math.PI), swerve));
-        addCommands(Commands.runOnce(() -> {swerve.aim();}, swerve));
+        // addCommands(Commands.runOnce(() -> swerve.getReefYaw(), swerve));
+        addCommands(Commands.runOnce(() -> {swerve.aimTarget();}, swerve));
+        stop = false;
+        System.out.println("stop");
         
-        addCommands(Commands.runOnce(() -> vision.getPoseFromTag(), vision));
+        // addCommands(Commands.runOnce(() -> vision.getPoseFromTag(), vision));
     }
     
 }

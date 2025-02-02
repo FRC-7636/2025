@@ -24,7 +24,7 @@ public class REEF2 extends Command{
     public void excute(){
         if(Math.abs(LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY()) < 1 ){
             controller.enableContinuousInput(-Math.PI, Math.PI);
-            swerve.aim();
+            swerve.aimTarget();
             stop = false;
         }
         else{

@@ -21,9 +21,11 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -62,6 +64,9 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase{
   public double val;
+  public boolean reef = false;
+  public double yaw;
+  public double yawafter;
   /**
    * Swerve drive object.
    */
@@ -148,9 +153,14 @@ public class SwerveSubsystem extends SubsystemBase{
     controller.enableContinuousInput(-Math.PI, Math.PI);
     val = LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY();
         while(Math.abs(val) > 1) {
-        drive(new Translation2d(0, 0), controller.calculate(val), false);
-    }
+        drive(new Translation2d(1, 1), controller.calculate(val), false);
+        reef = true;
+        }
     controller.close();
+  }
+
+  public void setHead() {
+    swerveDrive.setGyro(new Rotation3d(0, 0, Math.PI));
   }
 
   /**
@@ -158,6 +168,15 @@ public class SwerveSubsystem extends SubsystemBase{
    */
   public void setupPhotonVision(){
     vision = new Vision();
+  }
+  
+  public void getYaw(){
+    yaw = swerveDrive.getPose().getRotation().getDegrees();
+    // yaw = SwerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees()
+  }
+
+  public void getYawAfter(){
+    yawafter = swerveDrive.getPose().getRotation().getDegrees()/1.022;
   }
 
   @Override
@@ -169,6 +188,12 @@ public class SwerveSubsystem extends SubsystemBase{
       vision.updatePoseEstimation(swerveDrive);
     }
     SmartDashboard.putNumber("RY", val);
+    SmartDashboard.putBoolean("reef", reef);
+
+    getYaw();
+    getYawAfter();
+    SmartDashboard.putNumber("yaw", yaw);
+    SmartDashboard.putNumber("after", yawafter);
   }
 
   @Override
@@ -344,7 +369,6 @@ public class SwerveSubsystem extends SubsystemBase{
 
   /**
    * Drive with {@link SwerveSetpointGenerator} from 254, implemented by PathPlanner.
-   *
    * @param robotRelativeChassisSpeed Robot relative {@link ChassisSpeeds} to achieve.
    * @return {@link Command} to run.
    * @throws IOException    If the PathPlanner GUI settings is invalid
@@ -573,8 +597,12 @@ public class SwerveSubsystem extends SubsystemBase{
    * @return The robot's pose
    */
   public Pose2d getPose(){
+      // double Yaw = swerveDrive.getPose().getRotation().getDegrees();
+      // swerveDrive.getPose() = new Pose2d(new Translation2d(), new Rotation2d());
       return swerveDrive.getPose();
   }
+
+
 
   /**
    * Set chassis speeds with closed-loop velocity control.

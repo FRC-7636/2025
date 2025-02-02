@@ -61,8 +61,8 @@ private PIDController turnCtrl = new PIDController(Constants.AutoConstants.AutoT
             swerve.drive(targetTranslation2d, turnCtrl.calculate(deltaDeg), false);
         }
         else {
-            swerve.drive(targetTranslation2d, 0, true);
-            // swerve.drive(targetTranslation2d, turnCtrl.calculate(deltaDeg), false);
+            // swerve.drive(targetTranslation2d, 0, true);
+            swerve.drive(targetTranslation2d, turnCtrl.calculate(deltaDeg), false);
         }
     }
 

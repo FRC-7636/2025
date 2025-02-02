@@ -20,11 +20,11 @@ public class Reef extends SequentialCommandGroup{
     
 
     public Reef(SwerveSubsystem swerve, limelight limelight, Vision vision){
-        addRequirements(swerve, vision);
-        
+        addRequirements(swerve);
         addCommands(Commands.runOnce(() -> controller.enableContinuousInput(-Math.PI, Math.PI), swerve));
-        addCommands(Commands.runOnce(() -> { swerve.aim(); }, swerve));
-        // addCommands(Commands.runOnce(() -> vision.getPoseFromTag(), vision));
+        addCommands(Commands.runOnce(() -> {swerve.aim();}, swerve));
+        
+        addCommands(Commands.runOnce(() -> vision.getPoseFromTag(), vision));
     }
     
 }

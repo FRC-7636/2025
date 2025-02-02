@@ -220,6 +220,7 @@ public class Vision extends SubsystemBase{
   public Optional<Pose3d> getPoseFromTag(){
     id = (int) LimelightHelpers.getFiducialID("");
     Optional<Pose3d> TagPos = fieldLayout.getTagPose(id);
+    // if(TagPos.getRotation.getX())
     return TagPos;
   }
 

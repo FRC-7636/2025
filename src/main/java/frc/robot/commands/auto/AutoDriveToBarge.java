@@ -40,8 +40,8 @@ public class AutoDriveToBarge extends SequentialCommandGroup {
         if(RobotPose.getX() != 0){
             addCommands(Commands.runOnce(() -> swerve.resetOdometry(LimelightHelpers.getBotPose2d_wpiBlue("")), swerve));
             addCommands(swerve.getAutonomousCommand("New Path"));
-            addCommands(Commands.runOnce(() -> swerve.resetOdometry(LimelightHelpers.getBotPose2d_wpiBlue("")), swerve));
-            addCommands(swerve.getAutonomousCommand("New Path"));
+            // addCommands(Commands.runOnce(() -> swerve.resetOdometry(LimelightHelpers.getBotPose2d_wpiBlue("")), swerve));
+            // addCommands(swerve.getAutonomousCommand("New Path"));
         }
     }
 }

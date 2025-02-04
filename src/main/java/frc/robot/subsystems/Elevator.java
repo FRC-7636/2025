@@ -60,5 +60,28 @@ public class Elevator extends SubsystemBase{
         LeftMotor.setControl(new MotionMagicDutyCycle(0));
         RightMotor.setControl(new MotionMagicDutyCycle(0));
     }
+
     
+    // Algae test
+//     public void Shoot(){
+//         LeftMotor.set(0.7);
+//     }
+
+//     public void SlowShoot(){
+//         LeftMotor.set(0.8);
+//     }
+
+    
+//     public void suck(){
+//         LeftMotor.set(0.9);
+//     }
+
+//     public void SlowSuck(){
+//         LeftMotor.set(1);
+//     }
+
+//     public void stop(){
+//         LeftMotor.set(0);
+//     }
 }
+

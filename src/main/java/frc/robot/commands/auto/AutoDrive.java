@@ -1,5 +1,7 @@
 package frc.robot.commands.Auto;
 
+import java.util.concurrent.TransferQueue;
+
 import javax.xml.crypto.KeySelector.Purpose;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -27,7 +29,7 @@ public class AutoDrive extends Command{
     private PIDController driveCtrl = new PIDController(Constants.AutoConstants.AutoDrivePIDF.P, 
                                                         Constants.AutoConstants.AutoDrivePIDF.I, 
                                                         Constants.AutoConstants.AutoDrivePIDF.D);
-private PIDController turnCtrl = new PIDController(Constants.AutoConstants.AutoTurnPIDF.P, 
+    private PIDController turnCtrl = new PIDController(Constants.AutoConstants.AutoTurnPIDF.P, 
                                                    Constants.AutoConstants.AutoTurnPIDF.I, 
                                                    Constants.AutoConstants.AutoTurnPIDF.D);
 
@@ -44,6 +46,7 @@ private PIDController turnCtrl = new PIDController(Constants.AutoConstants.AutoT
         if (LLPose.getX() != 0) {
             swerve.resetOdometry(LLPose);
             stop = false;
+
         }
         else {
             stop = true; 
@@ -51,7 +54,7 @@ private PIDController turnCtrl = new PIDController(Constants.AutoConstants.AutoT
         
         Rotation2d tagRotation2d = new Rotation2d(Math.toRadians(90));
         Pose2d RobotPose = swerve.getPose();
-        Pose2d tagPose = new Pose2d(16.087, 1.168, tagRotation2d);
+        Pose2d tagPose = limelight.getAprilTagPose();
         Transform2d deltaTransform2d = RobotPose.minus(tagPose);
         Translation2d targetTranslation2d = deltaTransform2d.getTranslation();
         Rotation2d targetRotation2d = deltaTransform2d.getRotation();
@@ -59,10 +62,12 @@ private PIDController turnCtrl = new PIDController(Constants.AutoConstants.AutoT
         
         if ((Math.abs(deltaTransform2d.getX()) < 3) && (Math.abs(deltaTransform2d.getY()) < 3) && (Math.abs(deltaDeg) < 3)){
             swerve.drive(targetTranslation2d, turnCtrl.calculate(deltaDeg), false);
+            // swerve.drive(new Translation2d(16.315, 5.829), 142.877, false);
+            System.out.println(deltaTransform2d.getX());
         }
         else {
-            // swerve.drive(targetTranslation2d, 0, true);
-            swerve.drive(targetTranslation2d, turnCtrl.calculate(deltaDeg), false);
+            swerve.drive(targetTranslation2d, 0, true);
+            // swerve.drive(targetTranslation2d, turnCtrl.calculate(deltaDeg), false);
         }
     }
 

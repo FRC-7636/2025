@@ -26,6 +26,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -149,12 +150,18 @@ public class SwerveSubsystem extends SubsystemBase{
   }
 
   public void aim() {
-    PIDController controller = new PIDController(2, 0, 0);
+    PIDController controller = new PIDController(4, 0, 0);
     controller.enableContinuousInput(-Math.PI, Math.PI);
+
+    int allianceAprilTag = (int) LimelightHelpers.getFiducialID("");
+    Pose3d ReefPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
+    Transform2d delta_transform2d = getPose().minus(ReefPose.toPose2d());
+    Translation2d delta_Translation2d = delta_transform2d.getTranslation();
+
     val = LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY();
         while(Math.abs(val) > 1) {
-        drive(new Translation2d(4, 4), controller.calculate(val), false);
-        reef = true;
+          drive(delta_Translation2d, controller.calculate(val), false);
+          reef = true;
         }
     controller.close();
   }
@@ -177,7 +184,7 @@ public class SwerveSubsystem extends SubsystemBase{
   }
 
   public Rotation2d getReefYaw(){
-    if (LimelightHelpers.getFiducialID("") != 0){
+    if (LimelightHelpers.getFiducialID("") != -1){
       int allianceAprilTag = (int) LimelightHelpers.getFiducialID("");
       Pose3d ReefPose = aprilTagFieldLayout.getTagPose(allianceAprilTag).get();
       Translation2d relativeTrl = ReefPose.toPose2d().relativeTo(getPose()).getTranslation();
@@ -191,7 +198,7 @@ public class SwerveSubsystem extends SubsystemBase{
 
   public Command aimTarget(){
     return run(() -> {if (LimelightHelpers.getFiducialID("") != 0){
-                            drive(getTargetSpeeds(0, 0, Rotation2d.fromDegrees(LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY()))); // Not sure if this will work, more math may be required.
+                            drive(getTargetSpeeds(4, 4, Rotation2d.fromDegrees(LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY()))); // Not sure if this will work, more math may be required.
                       }});
     }
 
@@ -367,6 +374,7 @@ public class SwerveSubsystem extends SubsystemBase{
         }
       }
     });
+
   }
 
   /**
@@ -389,12 +397,12 @@ public class SwerveSubsystem extends SubsystemBase{
    */
   public Command driveToPose(Pose2d pose)
   {
-// Create the constraints to use while pathfinding
+  // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
         swerveDrive.getMaximumChassisVelocity(), 4.0,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
-// Since AutoBuilder is configured, we can use it to build pathfinding commands
+  // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return AutoBuilder.pathfindToPose(
         pose,
         constraints,

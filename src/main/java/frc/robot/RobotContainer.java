@@ -123,7 +123,7 @@ public class RobotContainer{
   // Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
   //   test.getLeftY() * -1,
   //   test.getLeftX() * -1, 
-  //   test.getRightX() * 1
+  //   test.getRightX() * 12
   // );
 
   // Applies deadbands and inverts controls because joysticks are back-right positive while robot controls are front-left positive
@@ -145,7 +145,8 @@ public class RobotContainer{
       .allianceRelativeControl(true);
   // Derive the heading axis with math!
   SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
-                                           .withControllerHeadingAxis(() -> Math.sin(test.getRawAxis(2) * Math.PI) * (Math.PI * 2),
+                                           .withControllerHeadingAxis(() -> Math.sin(test.getRawAxis(2) 
+                                           * Math.PI) * (Math.PI * 2),
                                                                       () -> Math.cos(test.getRawAxis(2) * Math.PI) * (Math.PI * 2)).headingWhile(true);
   Command driveFieldOrientedDirectAngleSim = drivebase.driveFieldOriented(driveDirectAngleSim);
 
@@ -180,12 +181,14 @@ public class RobotContainer{
     // new CommandXboxController(0).button(2).whileTrue(autoDrive);
     // new CommandXboxController(0).button(3).onTrue(reef);
 
-    new JoystickButton(test, 1).whileTrue(new InstantCommand(drivebase::aim));
-    new JoystickButton(test, 2).whileTrue(reef2);
-    
-    new JoystickButton(test, 3).onTrue(autoDrive);
-    new JoystickButton(test, 4).whileTrue(new InstantCommand(() -> drivebase.driveToPose(new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))));
-    new POVButton(test, 180).onTrue(new InstantCommand(drivebase::setHead));
+    // new JoystickButton(test, 1).whileTrue(new InstantCommand(drivebase::aim));
+    new JoystickButton(test, 2).whileTrue(autoDrive);
+  
+    // new JoystickButton(test, 3).onTrue(autoDrive);
+    // new JoystickButton(test, 4).whileTrue(drivebase.driveToPose(new Pose2d(8, 6, new Rotation2d(0))));
+    // // new JoystickButton(test, 5).whileTrue(reef);
+
+    // new POVButton(test, 180).onTrue(new InstantCommand(drivebase::setHead));
     
     // (Condition) ? Return-On-True :
     //  Return-on-False
@@ -193,7 +196,7 @@ public class RobotContainer{
         !RobotBase.isSimulation() ? driveFieldOrientedDirectAngle : driveFieldOrientedDirectAngleSim);
 
     // if (Robot.isSimulation()) {
-    //   driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+      // driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
     // }
     // if (DriverStation.isTest()) {
     //   drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
@@ -216,12 +219,13 @@ public class RobotContainer{
       // driverXbox.back().whileTrue(Commands.none());
       // driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       // driverXbox.rightBumper().onTrue(Commands.none());
-      new JoystickButton(test, 5).whileTrue(drivebase.driveToPose(new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+      // new JoystickButton(test, 5).onTrue(drivebase.driveToPose(new Pose2d(new Translation2d(14, 4), Rotation2d.fromDegrees(0))));
+      // new JoystickButton(test, 5).whileTrue(Commands.runOnce( () -> drivebase.resetOdometry(new Pose2d(12, 6, new Rotation2d(0)))));
         // drivebase.driveToPose(
-      new JoystickButton(test, 6).whileTrue(drivebase.driveToPose(((vision.getTagPose()))));
-
-            
-    // }
+      // new JoystickButton(test, 6).whileTrue(drivebase.driveToPose(((vision.getTagPose()))));
+      // new JoystickButton(test, 6).whileTrue(drivebase.driveToPose(new Pose2d(15.464, 7.352, Units.degreesToRadians(3.180))));
+      // new JoystickButton(PS5, 0).whileTrue(drivebase.driveToPose(new Pose2d(15, 7, 3.18)));
+      // }
   }
 
   /**

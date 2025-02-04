@@ -147,15 +147,15 @@ public class Vision extends SubsystemBase{
     }
     for (Cameras camera : Cameras.values()){
         Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
-        if (poseEst.isPresent())
+        if (poseEst != null && poseEst.isPresent())
         {
+          System.out.println("updated\n");
           var pose = poseEst.get();
           swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
                                           pose.timestampSeconds,
                                           camera.curStdDevs);
         }
     }
-
   }
 
   /**

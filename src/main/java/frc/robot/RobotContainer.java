@@ -45,6 +45,7 @@ import javax.xml.crypto.KeySelector.Purpose;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 
+import swervelib.SwerveDrive;
 import swervelib.SwerveInputStream;
 
 /**
@@ -153,7 +154,7 @@ public class RobotContainer{
   Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleSim);
 
   private final AutoDriveToBarge autoDriveToBarge = new AutoDriveToBarge(drivebase, limelight);
-  private final AutoDrive autoDrive = new AutoDrive(drivebase, limelight);
+  private final AutoDrive autoDrive = new AutoDrive(drivebase, limelight, vision);
   private final Reef reef = new Reef(drivebase, limelight, vision);
   private final REEF2 reef2 = new REEF2(drivebase, limelight);
 

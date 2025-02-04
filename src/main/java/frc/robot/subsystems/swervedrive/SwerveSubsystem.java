@@ -34,6 +34,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 
 import java.io.File;
@@ -68,6 +70,8 @@ public class SwerveSubsystem extends SubsystemBase{
   public boolean reef = false;
   public double yaw;
   public double yawafter;
+
+  public Field2d field = new Field2d();
   /**
    * Swerve drive object.
    */
@@ -79,7 +83,7 @@ public class SwerveSubsystem extends SubsystemBase{
   /**
    * Enable vision odometry updates while driving.
    */
-  private final boolean visionDriveTest = false;
+  private final boolean visionDriveTest = true;
   /**
    * PhotonVision class to keep an accurate odometry.
    */
@@ -131,6 +135,8 @@ public class SwerveSubsystem extends SubsystemBase{
       swerveDrive.stopOdometryThread();
     }
     setupPathPlanner();
+
+    resetOdometry(new Pose2d(6.122, 1.580, Rotation2d.fromDegrees(-90)));
   }
 
   /**
@@ -147,6 +153,15 @@ public class SwerveSubsystem extends SubsystemBase{
                                   new Pose2d(new Translation2d(Meter.of(2), 
                                                                Meter.of(0)),
                                                                Rotation2d.fromDegrees(0)));
+  }
+
+  public void fieldPose(){
+    // field = new Field2d();
+
+    // field.setRobotPose(getPose());
+    // SmartDashboard.putData("field", field);
+    // System.out.println("x" + getPose().getX());
+    // System.out.println("y" + getPose().getY());
   }
 
   public void aim() {
@@ -218,13 +233,18 @@ public class SwerveSubsystem extends SubsystemBase{
     yawafter = swerveDrive.getPose().getRotation().getDegrees()/1.022;
   }
 
+  // public void swerveDrivePoseEstimator()
   @Override
   public void periodic(){
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest)
     {
       swerveDrive.updateOdometry();
-      vision.updatePoseEstimation(swerveDrive);
+      swerveDrive.imuReadingCache.getValue().getZ();
+      SmartDashboard.putNumber("imu", swerveDrive.imuReadingCache.getValue().getZ());
+      // System.out.println(getPose().getRotation().getDegrees());
+      
+      LimelightHelpers.getOrientation(swerveDrive);
     }
     SmartDashboard.putNumber("RY", val);
     SmartDashboard.putBoolean("reef", reef);
@@ -236,6 +256,21 @@ public class SwerveSubsystem extends SubsystemBase{
     }
     SmartDashboard.putNumber("yaw", yaw);
     SmartDashboard.putNumber("after", yawafter);
+
+    field.setRobotPose(getPose());
+    SmartDashboard.putData("field2", field);
+    getPose();
+    fieldPose();
+
+    PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+    Pose2d botPose = mt2.pose;
+    Pose2d TagPose = vision.getTagPose();
+    // Transform2d Tag = TagPose.minus(new Pose2d(0, 1, Rotation2d.fromDegrees(0)));
+    Transform2d BotToTag = botPose.minus(TagPose);
+    Translation2d trans_BotToTag = BotToTag.getTranslation();
+    Rotation2d rota_BotToTag = BotToTag.getRotation();
+    SmartDashboard.putNumber("BotToTag", rota_BotToTag.getDegrees());
+
   }
 
   @Override
@@ -640,12 +675,8 @@ public class SwerveSubsystem extends SubsystemBase{
    * @return The robot's pose
    */
   public Pose2d getPose(){
-      // double Yaw = swerveDrive.getPose().getRotation().getDegrees();
-      // swerveDrive.getPose() = new Pose2d(new Translation2d(), new Rotation2d());
       return swerveDrive.getPose();
   }
-
-
 
   /**
    * Set chassis speeds with closed-loop velocity control.

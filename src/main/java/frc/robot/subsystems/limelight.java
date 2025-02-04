@@ -62,27 +62,27 @@ public class limelight extends SubsystemBase{
         return LimelightHelpers.getBotPose2d("").getRotation().getDegrees();
     }    
 
-    public static Pose2d getAprilTagPose(){
-        if (TagID != -1){
-            // Optional<Pose3d> aprilTagPose3d = aprilTagFieldLayout.getTagPose(TagID);
-            tag = true;
-            // return aprilTagPose3d.get().toPose2d().transformBy(robotOffset);
-            // return aprilTagPose3d.get().toPose2d();
-            return aprilTagFieldLayout.getTagPose(TagID).get().toPose2d();
-        }
-        else{
-            tag = false;
-            // throw new RuntimeException("Cannot get AprilTag " + aprilTag + " from field " + aprilTagFieldLayout.toString());
-            return new Pose2d();
-        }
-    }
+    // public static Pose2d getAprilTagPose(){
+    //     if (TagID != -1){
+    //         // Optional<Pose3d> aprilTagPose3d = aprilTagFieldLayout.getTagPose(TagID);
+    //         tag = true;
+    //         // return aprilTagPose3d.get().toPose2d().transformBy(robotOffset);
+    //         // return aprilTagPose3d.get().toPose2d();
+    //         return aprilTagFieldLayout.getTagPose(TagID).get().toPose2d();
+    //     }
+    //     else{
+    //         tag = false;
+    //         // throw new RuntimeException("Cannot get AprilTag " + aprilTag + " from field " + aprilTagFieldLayout.toString());
+    //         return new Pose2d();
+    //     }
+    // }
 
-        public Transform2d getdeltaPose(){
-            Rotation2d tagRotation2d = new Rotation2d(Math.toRadians(90));
-            Pose2d RobotPose = LimelightHelpers.getBotPose2d_wpiBlue("");
-            Pose2d tagPose = getAprilTagPose();
-            return RobotPose.minus(tagPose);
-        }
+        // public Transform2d getdeltaPose(){
+        //     Rotation2d tagRotation2d = new Rotation2d(Math.toRadians(90));
+        //     Pose2d RobotPose = LimelightHelpers.getBotPose2d_wpiBlue("");
+            // Pose2d tagPose = getAprilTagPose();
+            // return RobotPose.minus(tagPose);
+        // }
 
     @Override
     public void periodic(){
@@ -91,8 +91,8 @@ public class limelight extends SubsystemBase{
             getRobotPose();
             robotToTarget();
             deltaRobotHeadingDeg();
-            getAprilTagPose();
         }
+        // getAprilTagPose();
 
         field2d.setRobotPose(getRobotPose());
         SmartDashboard.putData("field2d", field2d);
@@ -101,5 +101,6 @@ public class limelight extends SubsystemBase{
         SmartDashboard.putNumber("Tag ID", TagID);
         SmartDashboard.putBoolean("getTag", tag);
         // SmartDashboard.putNumber("Robot_Heading_Degree", deltaRobotHeadingDeg());
+
    }
 }

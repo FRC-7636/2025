@@ -92,5 +92,17 @@ public final class Constants{
       public static final double F = 0;
   }
 
+  public static class IntakeConstants{
+      // Intake ID
+      public static final int ShuShu_ID = 31;
+      public static final int CC_ID = 43;
+
+      // Intake Config
+      public static final boolean ShuShu_Inverted = false;
+      public static final boolean CC_Inverted = false;
+      public static final double ShuShu_Longest = 0.25;
+      public static final double ShuShu_Shortest = 0.03;
+      public static final double ShuShu_Middle = 0.12;
+  }
   
 }

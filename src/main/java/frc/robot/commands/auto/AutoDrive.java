@@ -65,10 +65,12 @@ public class AutoDrive extends Command{
         Translation2d trans_BotToTag = MeterFrom_Tag.getTranslation();
         Rotation2d rota_BotToTag = MeterFrom_Tag.getRotation();
 
-        if(Math.abs(trans_BotToTag.getX()) != 0 ){
-            Commands.runOnce( () -> swerve.driveToPose(new Pose2d(trans_BotToTag, rota_BotToTag)), swerve);
+        // if(Math.abs(trans_BotToTag.getX()) != 0 ){
+        //     Commands.runOnce( () -> swerve.driveToPose(new Pose2d(trans_BotToTag, rota_BotToTag)), swerve);
             // Commands.runOnce( () -> swerve.drive(trans_BotToTag, rota_BotToTag.getDegrees(), false));
-        }
+        // }
+        
+        Commands.runOnce( () -> swerve.driveToPose(new Pose2d(6.122,3.58, Rotation2d.fromDegrees(-90))), swerve);
 
         // Pose2d LLPose = LimelightHelpers.getBotPose2d("");
         

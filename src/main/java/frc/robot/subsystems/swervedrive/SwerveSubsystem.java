@@ -134,9 +134,10 @@ public class SwerveSubsystem extends SubsystemBase{
       // Stop the odometry thread if we are using vision that way we can synchronize updates better.
       swerveDrive.stopOdometryThread();
     }
+    resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(getPose().getRotation().getDegrees())));
+
     setupPathPlanner();
 
-    resetOdometry(new Pose2d(6.122, 1.580, Rotation2d.fromDegrees(-90)));
   }
 
   /**
@@ -263,14 +264,16 @@ public class SwerveSubsystem extends SubsystemBase{
     fieldPose();
 
     PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
-    Pose2d botPose = mt2.pose;
-    Pose2d TagPose = vision.getTagPose();
-    // Transform2d Tag = TagPose.minus(new Pose2d(0, 1, Rotation2d.fromDegrees(0)));
-    Transform2d BotToTag = botPose.minus(TagPose);
-    Translation2d trans_BotToTag = BotToTag.getTranslation();
-    Rotation2d rota_BotToTag = BotToTag.getRotation();
-    SmartDashboard.putNumber("BotToTag", rota_BotToTag.getDegrees());
-
+    if(mt2 != null){
+      Pose2d botPose = mt2.pose;
+      Pose2d TagPose = vision.getTagPose();
+      // Transform2d Tag = TagPose.minus(new Pose2d(0, 1, Rotation2d.fromDegrees(0)));
+      Transform2d BotToTag = botPose.minus(TagPose);
+      Translation2d trans_BotToTag = BotToTag.getTranslation();
+      Rotation2d rota_BotToTag = BotToTag.getRotation();
+      SmartDashboard.putNumber("BotToTag", rota_BotToTag.getDegrees());
+    }
+    SmartDashboard.putNumber("heading", getHeading().getDegrees());
   }
 
   @Override
@@ -637,7 +640,11 @@ public class SwerveSubsystem extends SubsystemBase{
    * @param velocity Velocity according to the field.
    */
   public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity){
-      return run(() -> { swerveDrive.driveFieldOriented(velocity.get()); });
+    // System.out.println("drive");
+      return run(() -> { 
+        // System.out.println("drive");
+        swerveDrive.driveFieldOriented(velocity.get()); 
+      });
   }
 
   /**

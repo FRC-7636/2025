@@ -1656,7 +1656,7 @@ public class LimelightHelpers {
         if(Math.abs((swerve.getGyro().getYawAngularVelocity().magnitude())) > 720 ){
             doRejectUpdate = true;
         }
-        if(mt2.tagCount == 0){
+        if(mt2 == null || mt2.tagCount == 0){
             doRejectUpdate = true;
         }
         if(!doRejectUpdate){

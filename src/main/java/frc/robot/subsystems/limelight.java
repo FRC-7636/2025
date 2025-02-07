@@ -24,12 +24,10 @@ import frc.robot.LimelightHelpers;
 
 public class limelight extends SubsystemBase{
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+    NetworkTable table2 = NetworkTableInstance.getDefault().getTable("limelight2");
 
     public Field2d field2d;
     public static AprilTagFieldLayout aprilTagFieldLayout;
-
-    public Field2d field2ddd;
-    public static AprilTagFieldLayout aprilTagFieldLayout222;
 
     public static int TagID = (int) LimelightHelpers.getFiducialID("");
     public static boolean tag = false;
@@ -62,28 +60,6 @@ public class limelight extends SubsystemBase{
         return LimelightHelpers.getBotPose2d("").getRotation().getDegrees();
     }    
 
-    // public static Pose2d getAprilTagPose(){
-    //     if (TagID != -1){
-    //         // Optional<Pose3d> aprilTagPose3d = aprilTagFieldLayout.getTagPose(TagID);
-    //         tag = true;
-    //         // return aprilTagPose3d.get().toPose2d().transformBy(robotOffset);
-    //         // return aprilTagPose3d.get().toPose2d();
-    //         return aprilTagFieldLayout.getTagPose(TagID).get().toPose2d();
-    //     }
-    //     else{
-    //         tag = false;
-    //         // throw new RuntimeException("Cannot get AprilTag " + aprilTag + " from field " + aprilTagFieldLayout.toString());
-    //         return new Pose2d();
-    //     }
-    // }
-
-        // public Transform2d getdeltaPose(){
-        //     Rotation2d tagRotation2d = new Rotation2d(Math.toRadians(90));
-        //     Pose2d RobotPose = LimelightHelpers.getBotPose2d_wpiBlue("");
-            // Pose2d tagPose = getAprilTagPose();
-            // return RobotPose.minus(tagPose);
-        // }
-
     @Override
     public void periodic(){
         if(TagID != 1){
@@ -92,8 +68,6 @@ public class limelight extends SubsystemBase{
             robotToTarget();
             deltaRobotHeadingDeg();
         }
-        // getAprilTagPose();
-
         field2d.setRobotPose(getRobotPose());
         SmartDashboard.putData("field2d", field2d);
 

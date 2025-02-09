@@ -38,9 +38,9 @@ public final class Constants{
   public static class OperatorConstants{
     
     // Joystick Deadband
-    public static final double DEADBAND        = 0.1;
-    public static final double LEFT_Y_DEADBAND = 0.1;
-    public static final double RIGHT_X_DEADBAND = 0.1;
+    public static final double DEADBAND        = 0.5;
+    public static final double LEFT_Y_DEADBAND = 0.5;
+    public static final double RIGHT_X_DEADBAND = 0.5;
     
     public static final double TURN_CONSTANT    = 6;
   }
@@ -92,17 +92,28 @@ public final class Constants{
       public static final double F = 0;
   }
 
-  public static class IntakeConstants{
-      // Intake ID
-      public static final int ShuShu_ID = 31;
-      public static final int CC_ID = 43;
+    public static class IntakeConstants{
+        // Intake ID
+        public static final int ShuShu_ID = 31;
+        public static final int CC_ID = 43;
 
-      // Intake Config
-      public static final boolean ShuShu_Inverted = false;
-      public static final boolean CC_Inverted = false;
-      public static final double ShuShu_Longest = 0.25;
-      public static final double ShuShu_Shortest = 0.03;
-      public static final double ShuShu_Middle = 0.12;
-  }
+        // Intake Config
+        public static final boolean Shu_Inverted = false;
+        public static final boolean CC_Inverted = false;
+        public static final double ShuShu_Longest = 1.3;
+        public static final double ShuShu_Shortest = 0.0;
+        public static final double ShuShu_Middle = 0.12;
+
+        public static final double kSVolts = 0;
+        public static final double kGVolts = 0.33;
+        public static final double kVVoltSecondPerRad = 6.24;
+        public static final double kAVoltSecondSquaredPerRad = 0.04;
+
+        // Intake PIDF
+        // public static final double intake_P = 0.025;
+        // public static final double intake_I = 0;
+        // public static final double intake_D = 0;
+        // public static final double intake_F = 0;
+    }
   
 }

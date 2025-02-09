@@ -32,8 +32,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
@@ -48,11 +52,16 @@ import frc.robot.subsystems.swervedrive.Vision.Cameras;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.PublicKey;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import javax.xml.crypto.KeySelector.Purpose;
+
 import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
@@ -84,6 +93,16 @@ public class SwerveSubsystem extends SubsystemBase{
    * Enable vision odometry updates while driving.
    */
   private final boolean visionDriveTest = true;
+  // private ShuffleboardTab Tab = Shuffleboard.getTab("drive");
+  // private GenericEntry Drive_P = Tab.add("drive_P", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
+  // private GenericEntry Drive_I = Tab.add("drive_I", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
+  // private GenericEntry Drive_D = Tab.add("drive_D", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
+
+  // private GenericEntry Turn_P = Tab.add("Turn_P", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
+  // private GenericEntry Turn_I = Tab.add("Turn_I", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
+  // private GenericEntry Turn_D = Tab.add("Turn_D", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
+  private PIDController drive = new PIDController(0, 0, 0);
+  private PIDController turn = new PIDController(0, 0, 0);
   /**
    * PhotonVision class to keep an accurate odometry.
    */
@@ -134,11 +153,12 @@ public class SwerveSubsystem extends SubsystemBase{
       // Stop the odometry thread if we are using vision that way we can synchronize updates better.
       swerveDrive.stopOdometryThread();
     }
-    resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(getPose().getRotation().getDegrees())));
+    // resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(getPose().getRotation().getDegrees())));
+    resetOdometry(new Pose2d(2.901, 4.301, Rotation2d.fromDegrees(0)));
 
     setupPathPlanner();
 
-  }
+    }
 
   /**
    * Construct the swerve drive.
@@ -234,9 +254,10 @@ public class SwerveSubsystem extends SubsystemBase{
     yawafter = swerveDrive.getPose().getRotation().getDegrees()/1.022;
   }
 
-  // public void swerveDrivePoseEstimator()
   @Override
   public void periodic(){
+
+
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest)
     {
@@ -250,10 +271,10 @@ public class SwerveSubsystem extends SubsystemBase{
     SmartDashboard.putNumber("RY", val);
     SmartDashboard.putBoolean("reef", reef);
     if (LimelightHelpers.getFiducialID("") != 0){
-    aimAt(1);
+    // aimAt(1);
     // getReefYaw();
-    getYaw();
-    getYawAfter();
+    // getYaw();
+    // getYawAfter();
     }
     SmartDashboard.putNumber("yaw", yaw);
     SmartDashboard.putNumber("after", yawafter);
@@ -262,6 +283,8 @@ public class SwerveSubsystem extends SubsystemBase{
     SmartDashboard.putData("field2", field);
     getPose();
     fieldPose();
+    SmartDashboard.putNumber("X", getPose().getX());
+    SmartDashboard.putNumber("Y", getPose().getY());
 
     PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
     if(mt2 != null){
@@ -274,16 +297,22 @@ public class SwerveSubsystem extends SubsystemBase{
       SmartDashboard.putNumber("BotToTag", rota_BotToTag.getDegrees());
     }
     SmartDashboard.putNumber("heading", getHeading().getDegrees());
+
+    SmartDashboard.putData("drive", drive);
+    SmartDashboard.putData("turn", turn);
   }
 
   @Override
   public void simulationPeriodic(){
   }
 
-  /**
-   * Setup AutoBuilder for PathPlanner.
-   */
+  public void setPose(){
+
+  }
+
   public void setupPathPlanner(){
+    // resetOdometry(new Pose2d(0,0, Rotation2d.fromDegrees(0)));
+    
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
     RobotConfig config;
@@ -314,10 +343,10 @@ public class SwerveSubsystem extends SubsystemBase{
           },
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
-          // PPHolonomicController is the built in path following controller for holonomic drive trains
-          new PIDConstants(0.5, 0.0, 0.0),
+          // PPHolonomicController is% the built in path following controller for holonomic drive trains
+          new PIDConstants(4, 0, 0, 20),
           // Translation PID constants
-          new PIDConstants(0.5, 0.0, 0.0)
+          new PIDConstants(4, 0, 0, 0)
           // Rotation PID constants
           ),
           config,
@@ -346,8 +375,80 @@ public class SwerveSubsystem extends SubsystemBase{
 
     //Preload PathPlanner Path finding
     // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
-    PathfindingCommand.warmupCommand().schedule();
+    // PathfindingCommand.warmupCommand().schedule();
   }
+
+
+  // /**
+  //  * Setup AutoBuilder for PathPlanner.
+  //  */
+  // public void setupPathPlanner(){
+  //   // Load the RobotConfig from the GUI settings. You should probably
+  //   // store this in your Constants file
+  //   RobotConfig config;
+  //   try{
+  //     config = RobotConfig.fromGUISettings();
+
+  //     final boolean enableFeedforward = true;
+  //     // Configure AutoBuilder last
+  //     AutoBuilder.configure(
+  //         this::getPose,
+  //         // Robot pose supplier
+  //         this::resetOdometry,
+  //         // Method to reset odometry (will be called if your auto has a starting pose)
+  //         this::getRobotVelocity,
+  //         // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+  //         (speedsRobotRelative, moduleFeedForwards) -> {
+  //           if (enableFeedforward)
+  //           {
+  //             swerveDrive.drive(
+  //                               speedsRobotRelative,
+  //                               swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
+  //                               moduleFeedForwards.linearForces()
+  //                              );
+  //           } else
+  //           {
+  //             swerveDrive.setChassisSpeeds(speedsRobotRelative);
+  //           }
+  //         },
+  //         // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+  //         new PPHolonomicDriveController(
+  //         // PPHolonomicController is the built in path following controller for holonomic drive trains
+  //         new PIDConstants(0.5, 0.0, 0.0),
+  //         // Translation PID constants
+  //         new PIDConstants(0.5, 0.0, 0.0)
+  //         // Rotation PID constants
+  //         ),
+  //         config,
+  //         // The robot configuration
+  //         () -> {
+  //           // Boolean supplier that controls when the path will be mirrored for the red alliance
+  //           // This will flip the path being followed to the red side of the field.
+  //           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+  //           var alliance = DriverStation.getAlliance();
+  //           if (alliance.isPresent())
+  //           {
+  //             return alliance.get() == DriverStation.Alliance.Red;
+  //           }
+  //           return false;
+  //         },
+  //         this
+  //         // Reference to this subsystem to set requirements
+  //     );
+
+  //   } catch (Exception e)
+  //   {
+  //     // Handle exception as needed
+  //     e.printStackTrace();
+  //   }
+
+  //   //Preload PathPlanner Path finding
+  //   // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
+  //   PathfindingCommand.warmupCommand().schedule();
+  // }
+
+  
 
   /**
    * Get the distance to the speaker.
@@ -645,6 +746,7 @@ public class SwerveSubsystem extends SubsystemBase{
         // System.out.println("drive");
         swerveDrive.driveFieldOriented(velocity.get()); 
       });
+      //.andThen(() -> swerveDrive.drive(new ChassisSpeeds(0, 0, 0)));
   }
 
   /**

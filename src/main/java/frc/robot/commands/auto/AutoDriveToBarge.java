@@ -45,28 +45,31 @@ public class AutoDriveToBarge extends SequentialCommandGroup {
 
         // boolean auto = false;
 
-        PathPlannerPath path = null;
-        try {
-            path = PathPlannerPath.fromPathFile("DriveToBlueBarge");
-        } catch (FileVersionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        // PathPlannerPath path = null;
+        // try {
+        //     path = PathPlannerPath.fromPathFile("New Path");
+        //     swerve.getSwerveDrive().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+            
+        // } catch (FileVersionException e) {
+        //     // TODO Auto-generated catch block
+        //     e.printStackTrace();
+        // } catch (IOException e) {
+        //     // TODO Auto-generated catch block
+        //     e.printStackTrace();
+
+        // } catch (ParseException e) {
+        //     // TODO Auto-generated catch block
+        //     e.printStackTrace();
+        // }
         
         // if(RobotPose.getX() != 0){
             addRequirements(swerve);
             // addCommands(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(0)))));
-            addCommands(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(swerve.getHeading().getDegrees())))));
-            addCommands(swerve.getAutonomousCommand("New Path"));
-            addCommands(AutoBuilder.followPath(path));
-            // addCommands(Commands.runOnce(() -> swerve.resetOdometry(LimelightHelpers.getBotPose2d_wpiBlue("")), swerve));
-            // addCommands(swerve.getAutonomousCommand("New Path"));
+            // addCommands(AutoBuilder.followPath(path));
+
+            // addCommands(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(1.642, 3.348, Rotation2d.fromDegrees(0)))));
+            addCommands( swerve.driveToPose(new Pose2d(2.901, 4.301, Rotation2d.fromDegrees(0))));
+
         // }
     }
 }

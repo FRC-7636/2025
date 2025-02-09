@@ -31,9 +31,6 @@ public class AutoDrive extends Command{
     private final limelight limelight;
     private final Vision vision;
 
-    private boolean stop = false;
-    // private boolean stop2;
-
     // Rotation2d tagRotation2d;
     // Pose2d RobotPose, tagPose;
     // Transform2d deltaTransform2d = new Transform2d();
@@ -57,20 +54,19 @@ public class AutoDrive extends Command{
     }
     @Override
     public void execute(){
-
-        PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
-        Pose2d botPose = mt2.pose;
-        Pose2d TagPose = vision.getTagPose();
-        Transform2d MeterFrom_Tag = TagPose.minus(new Pose2d(0, -1, Rotation2d.fromDegrees(0)));
-        Translation2d trans_BotToTag = MeterFrom_Tag.getTranslation();
-        Rotation2d rota_BotToTag = MeterFrom_Tag.getRotation();
+        // PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+        // Pose2d botPose = mt2.pose;
+        // Pose2d TagPose = vision.getTagPose();
+        // Transform2d MeterFrom_Tag = TagPose.minus(new Pose2d(0, -1, Rotation2d.fromDegrees(0)));
+        // Translation2d trans_BotToTag = MeterFrom_Tag.getTranslation();
+        // Rotation2d rota_BotToTag = MeterFrom_Tag.getRotation();
 
         // if(Math.abs(trans_BotToTag.getX()) != 0 ){
         //     Commands.runOnce( () -> swerve.driveToPose(new Pose2d(trans_BotToTag, rota_BotToTag)), swerve);
             // Commands.runOnce( () -> swerve.drive(trans_BotToTag, rota_BotToTag.getDegrees(), false));
-        // }
-        
-        Commands.runOnce( () -> swerve.driveToPose(new Pose2d(6.122,3.58, Rotation2d.fromDegrees(-90))), swerve);
+
+        Commands.runOnce( () -> swerve.resetOdometry(new Pose2d(2.601, 3.301, Rotation2d.fromDegrees(0))), swerve);
+        Commands.runOnce( () -> swerve.driveToPose(new Pose2d(2.901, 4.031, Rotation2d.fromDegrees(80.786))), swerve);
 
         // Pose2d LLPose = LimelightHelpers.getBotPose2d("");
         
@@ -97,7 +93,7 @@ public class AutoDrive extends Command{
         // }
         // else {
         //     swerve.drive(targetTranslation2d, 0, true);
-        //     // swerve.drive(targetTranslation2d, turnCtrl.calculate(deltaDeg), false);
+            // // swerve.drive(targetTranslation2d, turnCtrl.calculate(deltaDeg), false);
         // }
     }
 

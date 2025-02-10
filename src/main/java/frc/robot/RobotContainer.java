@@ -34,9 +34,6 @@ import frc.robot.subsystems.swervedrive.Vision;
 import java.io.File;
 import java.util.function.Supplier;
 
-import javax.xml.crypto.KeySelector.Purpose;
-
-import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import swervelib.SwerveInputStream;

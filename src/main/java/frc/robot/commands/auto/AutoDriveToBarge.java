@@ -1,28 +1,10 @@
 package frc.robot.commands.auto;
 
-import java.io.IOException;
-
-import org.json.simple.parser.ParseException;
-import org.opencv.core.Mat;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.FileVersionException;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
-import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.limelight;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-import swervelib.SwerveDrive;
 
 public class AutoDriveToBarge extends SequentialCommandGroup {
     // private PIDController driveCtrl = new PIDController(Constants.AutoConstants.AutoDrivePIDF.P, 

@@ -37,9 +37,9 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 // NEO Motor - for 
 // Karken Motor - for 
 public class Algae extends SubsystemBase {
-    private final SparkMax Intake_ctrl = new SparkMax(IntakeConstants.Intake_ctrl_ID, MotorType.kBrushless);
+    private final SparkMax ShuShu = new SparkMax(IntakeConstants.ShuShu_ID, MotorType.kBrushless);
     // private final TalonFX CC = new TalonFX(IntakeConstants.CC_ID, "cantivore");
-    private final TalonFX Roller = new TalonFX(IntakeConstants.Roller_ID, "rio");
+    private final TalonFX CC = new TalonFX(IntakeConstants.CC_ID, "rio");
 
     private final SparkMaxConfig Intake_ctrl_Config;
 
@@ -80,8 +80,8 @@ public class Algae extends SubsystemBase {
         Intake_ctrl_Encoder_Config.inverted(Constants.IntakeConstants.Intake_ctrl_Inverted);
         Intake_ctrl_Encoder_Config.positionConversionFactor(360);
 
-        Roller.setNeutralMode(NeutralModeValue.Brake);
-        Roller.setInverted(IntakeConstants.Roller_Inverted);
+        CC.setNeutralMode(NeutralModeValue.Brake);
+        CC.setInverted(IntakeConstants.CC_Inverted);
 
         // CC_Config.apply(new FeedbackConfigs()
         //         .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor));

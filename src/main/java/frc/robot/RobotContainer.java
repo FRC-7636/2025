@@ -5,26 +5,17 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 import frc.robot.commands.auto.AutoDrive;
 import frc.robot.commands.auto.AutoDriveToBarge;
@@ -39,18 +30,15 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.limelight;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
-import pabeles.concurrency.ConcurrencyOps.NewInstance;
 
 import java.io.File;
 import java.util.function.Supplier;
 
 import javax.xml.crypto.KeySelector.Purpose;
 
-import com.ctre.phoenix.time.StopWatch;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import swervelib.SwerveDrive;
 import swervelib.SwerveInputStream;
 
 /**

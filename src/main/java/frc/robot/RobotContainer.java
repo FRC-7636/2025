@@ -28,10 +28,10 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 import frc.robot.commands.Auto.AutoDrive;
 import frc.robot.commands.Auto.AutoDriveToBarge;
+import frc.robot.commands.Auto.AutoToReef;
 import frc.robot.commands.Auto.REEF2;
 import frc.robot.commands.Auto.Reef;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
-import frc.robot.subsystems.algae;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Coral;
@@ -47,6 +47,7 @@ import java.util.function.Supplier;
 import javax.xml.crypto.KeySelector.Purpose;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import swervelib.SwerveDrive;
 import swervelib.SwerveInputStream;
@@ -75,7 +76,13 @@ public class RobotContainer{
   private final Coral coral = new Coral();
   private final Elevator elevator = new Elevator();
   private final limelight limelight = new limelight();
-  
+
+  private final AutoDriveToBarge autoDriveToBarge = new AutoDriveToBarge(drivebase, limelight);
+  private final AutoDrive autoDrive = new AutoDrive(drivebase, limelight, vision);
+  private final AutoToReef autoToReef = new AutoToReef(drivebase);
+  private final Reef reef = new Reef(drivebase, limelight, vision);
+  private final REEF2 reef2 = new REEF2(drivebase, limelight);
+
   // Applies deadbands and inverts controls because joysticks are back-right positive while robot controls are front-left positive.
   // left stick controls translation, right stick controls the rotational velocity, buttons are quick rotation positions to different ways to face.
   // WARNING: default buttons are on the same buttons as the ones defined in configureBindings.
@@ -121,7 +128,7 @@ public class RobotContainer{
   Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
     test.getLeftY() * -2,
     test.getLeftX() * -2, 
-    test.getRightX() * -15
+    test.getRightX() * -2
     );
 
   // Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
@@ -164,12 +171,9 @@ public class RobotContainer{
 
   Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleSim);
 
-  private final AutoDriveToBarge autoDriveToBarge = new AutoDriveToBarge(drivebase, limelight);
-  private final AutoDrive autoDrive = new AutoDrive(drivebase, limelight, vision);
-  private final Reef reef = new Reef(drivebase, limelight, vision);
-  private final REEF2 reef2 = new REEF2(drivebase, limelight);
-
   public RobotContainer() {
+    NamedCommands.registerCommand("test", autoToReef);
+
     // Configure the trigger bindings
     configureBindings();
     drivebase.setDefaultCommand(closedAbsoluteDriveAdv);

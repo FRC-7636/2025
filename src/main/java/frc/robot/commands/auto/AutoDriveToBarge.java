@@ -25,12 +25,12 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveDrive;
 
 public class AutoDriveToBarge extends SequentialCommandGroup {
-    private PIDController driveCtrl = new PIDController(Constants.AutoConstants.AutoDrivePIDF.P, 
-                                                        Constants.AutoConstants.AutoDrivePIDF.I, 
-                                                        Constants.AutoConstants.AutoDrivePIDF.D);
-    private PIDController turnCtrl = new PIDController(Constants.AutoConstants.AutoTurnPIDF.P, 
-                                                       Constants.AutoConstants.AutoTurnPIDF.I, 
-                                                       Constants.AutoConstants.AutoTurnPIDF.D);
+    // private PIDController driveCtrl = new PIDController(Constants.AutoConstants.AutoDrivePIDF.P, 
+    //                                                     Constants.AutoConstants.AutoDrivePIDF.I, 
+    //                                                     Constants.AutoConstants.AutoDrivePIDF.D);
+    // private PIDController turnCtrl = new PIDController(Constants.AutoConstants.AutoTurnPIDF.P, 
+    //                                                    Constants.AutoConstants.AutoTurnPIDF.I, 
+    //                                                    Constants.AutoConstants.AutoTurnPIDF.D);
 
     public AutoDriveToBarge(SwerveSubsystem swerve, limelight limelight){
         // Pose2d BotPose = LimelightHelpers.getBotPose2d_wpiBlue("");
@@ -68,7 +68,8 @@ public class AutoDriveToBarge extends SequentialCommandGroup {
             // addCommands(AutoBuilder.followPath(path));
 
             // addCommands(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(1.642, 3.348, Rotation2d.fromDegrees(0)))));
-            addCommands( swerve.driveToPose(new Pose2d(2.901, 4.301, Rotation2d.fromDegrees(0))));
+            addCommands( swerve.driveToPose(new Pose2d(3.051, 4.251, Rotation2d.fromDegrees(0))));
+
 
         // }
     }

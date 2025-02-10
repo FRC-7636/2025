@@ -102,7 +102,8 @@ public class SwerveSubsystem extends SubsystemBase{
   // private GenericEntry Turn_I = Tab.add("Turn_I", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
   // private GenericEntry Turn_D = Tab.add("Turn_D", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
   private PIDController drive = new PIDController(0, 0, 0);
-  private PIDController turn = new PIDController(0, 0, 0);
+  private PIDController turn = new PIDController(0, 0, 0)
+  ;
   /**
    * PhotonVision class to keep an accurate odometry.
    */
@@ -147,9 +148,13 @@ public class SwerveSubsystem extends SubsystemBase{
                                                0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(false,
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
+    
+    
+                                                swerveDrive.updateCacheValidityPeriods(15, 15, 15);
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
+    // swerveDrive.chassisVelocityCorrection(true);
     if (visionDriveTest){
-      setupPhotonVision();
+      // setupPhotonVision();
       // Stop the odometry thread if we are using vision that way we can synchronize updates better.
       swerveDrive.stopOdometryThread();
     }
@@ -242,22 +247,11 @@ public class SwerveSubsystem extends SubsystemBase{
    * Setup the photon vision class.
    */
   public void setupPhotonVision(){
-    vision = new Vision();
+    // vision = new Vision();
   }
   
-  public void getYaw(){
-    yaw = swerveDrive.getPose().getRotation().getDegrees();
-    // yaw = SwerveDrivePoseEstimator.getEstimatedPosition().getRotation().getDegrees()
-  }
-
-  public void getYawAfter(){
-    yawafter = swerveDrive.getPose().getRotation().getDegrees()/1.022;
-  }
-
   @Override
   public void periodic(){
-
-
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest)
     {
@@ -268,16 +262,16 @@ public class SwerveSubsystem extends SubsystemBase{
       
       LimelightHelpers.getOrientation(swerveDrive);
     }
-    SmartDashboard.putNumber("RY", val);
-    SmartDashboard.putBoolean("reef", reef);
-    if (LimelightHelpers.getFiducialID("") != 0){
+    // SmartDashboard.putNumber("RY", val);
+    // SmartDashboard.putBoolean("reef", reef);
+    // if (LimelightHelpers.getFiducialID("") != 0){
     // aimAt(1);
     // getReefYaw();
     // getYaw();
     // getYawAfter();
-    }
-    SmartDashboard.putNumber("yaw", yaw);
-    SmartDashboard.putNumber("after", yawafter);
+    // }
+    // SmartDashboard.putNumber("yaw", yaw);
+    // SmartDashboard.putNumber("after", yawafter);
 
     field.setRobotPose(getPose());
     SmartDashboard.putData("field2", field);
@@ -286,15 +280,18 @@ public class SwerveSubsystem extends SubsystemBase{
     SmartDashboard.putNumber("X", getPose().getX());
     SmartDashboard.putNumber("Y", getPose().getY());
 
+
     PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
     if(mt2 != null){
       Pose2d botPose = mt2.pose;
-      Pose2d TagPose = vision.getTagPose();
+      SmartDashboard.putNumber("llX", botPose.getX());
+      SmartDashboard.putNumber("llY", botPose.getY());
+      // Pose2d TagPose = vision.getTagPose();
       // Transform2d Tag = TagPose.minus(new Pose2d(0, 1, Rotation2d.fromDegrees(0)));
-      Transform2d BotToTag = botPose.minus(TagPose);
-      Translation2d trans_BotToTag = BotToTag.getTranslation();
-      Rotation2d rota_BotToTag = BotToTag.getRotation();
-      SmartDashboard.putNumber("BotToTag", rota_BotToTag.getDegrees());
+      // Transform2d BotToTag = botPose.minus(TagPose);
+      // Translation2d trans_BotToTag = BotToTag.getTranslation();
+      // Rotation2d rota_BotToTag = BotToTag.getRotation();
+      // SmartDashboard.putNumber("BotToTag", rota_BotToTag.getDegrees());
     }
     SmartDashboard.putNumber("heading", getHeading().getDegrees());
 
@@ -344,9 +341,9 @@ public class SwerveSubsystem extends SubsystemBase{
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
           // PPHolonomicController is% the built in path following controller for holonomic drive trains
-          new PIDConstants(4, 0, 0, 20),
+          new PIDConstants(4, 0, 0.1, 20),
           // Translation PID constants
-          new PIDConstants(4, 0, 0, 0)
+          new PIDConstants(5, 0, 0, 0)
           // Rotation PID constants
           ),
           config,
@@ -537,16 +534,21 @@ public class SwerveSubsystem extends SubsystemBase{
   public Command driveToPose(Pose2d pose)
   {
   // Create the constraints to use while pathfinding
+    // PathConstraints constraints = new PathConstraints(
+    //     swerveDrive.getMaximumChassisVelocity(), 2.0,
+    //     swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(180));
+
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
-        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+          2.0, 1.0,
+          Units.degreesToRadians(270), Units.degreesToRadians(180));
+
 
   // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return AutoBuilder.pathfindToPose(
         pose,
         constraints,
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-                                     );
+    ).andThen(Commands.runOnce(() -> swerveDrive.lockPose()));
   }
 
   /**

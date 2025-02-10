@@ -1660,7 +1660,7 @@ public class LimelightHelpers {
             doRejectUpdate = true;
         }
         if(!doRejectUpdate){
-            swerve.setVisionMeasurementStdDevs(VecBuilder.fill(0.07, 0.7, 9999999));
+            swerve.setVisionMeasurementStdDevs(VecBuilder.fill(0.005, 0.003, 9999999));
             swerve.addVisionMeasurement(mt2.pose, Utils.fpgaToCurrentTime(mt2.timestampSeconds));
         }
     }

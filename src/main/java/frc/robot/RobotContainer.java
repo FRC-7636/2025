@@ -111,17 +111,17 @@ public class RobotContainer{
       test::getRightY)
       .headingWhile(true);
 
-  Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
-    test.getLeftY() * -2,
-    test.getLeftX() * -2, 
-    test.getRightX() * -2
-    );
-
   // Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
-  //   test.getLeftY() * 0,
-  //   test.getLeftX() * 0, 
-  //   test.getRightX() * 0
+  //   test.getLeftY() * -2,
+  //   test.getLeftX() * -2, 
+  //   test.getRightX() * -2
   //   );
+
+  Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
+    test.getLeftY() * 0,
+    test.getLeftX() * 0, 
+    test.getRightX() * 0
+    );
 
   // Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
   //   test.getLeftY() * -1,
@@ -180,14 +180,14 @@ public class RobotContainer{
    * Flight joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(test, 2).onTrue(new InstantCommand(drivebase::setupPathPlanner));
-    new JoystickButton(test, 1).onTrue(autoDriveToBarge);
-    new JoystickButton(test, 3).whileTrue(drivebase.driveToDistanceCommand(1,1));
-    // new JoystickButton(test, 1).whileTrue(new InstantCommand((algae::ShuShu) -> drivebase.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
-    // new JoystickButton(test, 1).onTrue(new InstantCommand(algae::ShuShu));
-    // new JoystickButton(test, 2).onTrue(new InstantCommand(algae::BomBom));
-    // new JoystickButton(test, 1).whileTrue(new InstantCommand(algae::CC)).onFalse(new InstantCommand(algae::Stop));
-    // new JoystickButton(test, 4).whileTrue(new InstantCommand(algae::TT)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 2).onTrue(new InstantCommand(drivebase::setupPathPlanner));
+    // new JoystickButton(test, 1).onTrue(autoDriveToBarge);
+    // new JoystickButton(test, 3).whileTrue(drivebase.driveToDistanceCommand(1,1));
+    
+    new JoystickButton(test, 1).onTrue(new InstantCommand(algae::ShuShu));
+    new JoystickButton(test, 2).onTrue(new InstantCommand(algae::BomBom));
+    new JoystickButton(test, 3).whileTrue(new InstantCommand(algae::CC)).onFalse(new InstantCommand(algae::Stop));
+    new JoystickButton(test, 4).whileTrue(new InstantCommand(algae::TT)).onFalse(new InstantCommand(algae::Stop));
     // new JoystickButton(test, 5).onTrue(new InstantCommand(algae::ShuBom));
     // new JoystickButton(test, 6).whileTrue(new InstantCommand(algae::Shu)).onFalse(new InstantCommand(algae::Stop));
     // new JoystickButton(test, 7).whileTrue(new InstantCommand(algae::Bom)).onFalse(new InstantCommand(algae::Stop));

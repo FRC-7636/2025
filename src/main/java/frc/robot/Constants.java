@@ -94,15 +94,15 @@ public final class Constants{
 
     public static class IntakeConstants{
         // Intake ID
-        public static final int ShuShu_ID = 31;
-        public static final int CC_ID = 43;
+        public static final int Intake_ctrl_ID = 31;
+        public static final int Roller_ID = 43;
 
         // Intake Config
-        public static final boolean Shu_Inverted = false;
-        public static final boolean CC_Inverted = false;
-        public static final double ShuShu_Longest = 1.3;
-        public static final double ShuShu_Shortest = 0.0;
-        public static final double ShuShu_Middle = 0.12;
+        public static final boolean Intake_ctrl_Inverted = false;
+        public static final boolean Roller_Inverted = false;
+        public static final double Intake_ctrl_Longest = 1.3;
+        public static final double Intake_ctrl_Shortest = 0.0;
+        public static final double Intake_ctrl_Middle = 0.12;
 
         public static final double kSVolts = 0;
         public static final double kGVolts = 0.33;

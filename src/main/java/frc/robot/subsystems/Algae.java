@@ -37,12 +37,13 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 // NEO Motor - for 
 // Karken Motor - for 
 public class Algae extends SubsystemBase {
-    private final SparkMax ShuShu = new SparkMax(IntakeConstants.ShuShu_ID, MotorType.kBrushless);
-    private final TalonFX CC = new TalonFX(IntakeConstants.CC_ID, "rio");
+    private final SparkMax Intake_ctrl = new SparkMax(IntakeConstants.Intake_ctrl_ID, MotorType.kBrushless);
+    // private final TalonFX CC = new TalonFX(IntakeConstants.CC_ID, "cantivore");
+    private final TalonFX Roller = new TalonFX(IntakeConstants.Roller_ID, "rio");
 
-    private final SparkMaxConfig ShuShu_Config;
+    private final SparkMaxConfig Intake_ctrl_Config;
 
-    private final AbsoluteEncoder ShuShuEncoder = new AbsoluteEncoder(){
+    private final AbsoluteEncoder Intake_ctrl_Encoder = new AbsoluteEncoder(){
         @Override
         public double getPosition() {
             return 0;
@@ -52,101 +53,112 @@ public class Algae extends SubsystemBase {
         }
     };
 
-     private final ArmFeedforward Shu_Feedforward = new ArmFeedforward(
-        IntakeConstants.kSVolts, IntakeConstants.kGVolts,
-        IntakeConstants.kVVoltSecondPerRad, IntakeConstants.kAVoltSecondSquaredPerRad
-    );
+    //  private final ArmFeedforward Shu_Feedforward = new ArmFeedforward(
+    //     IntakeConstants.kSVolts, IntakeConstants.kGVolts,
+    //     IntakeConstants.kVVoltSecondPerRad, IntakeConstants.kAVoltSecondSquaredPerRad
+    // );
 
-    private final SparkClosedLoopController ShuShu_PID = ShuShu.getClosedLoopController();
+    private final SparkClosedLoopController Intake_ctrl_PID = Intake_ctrl.getClosedLoopController();
         
     public Algae(){
-        ShuShu_Config = new SparkMaxConfig();
-        AbsoluteEncoderConfig ShuShu_Encoder_Config = new AbsoluteEncoderConfig();
-        var CC_Config = CC.getConfigurator();
+        Intake_ctrl_Config = new SparkMaxConfig();
+        AbsoluteEncoderConfig Intake_ctrl_Encoder_Config = new AbsoluteEncoderConfig();
+        var Roller_Config = Roller.getConfigurator();
 
-        // ShuShu Config
-        ShuShu_Config.idleMode(SparkBaseConfig.IdleMode.kBrake);
-        ShuShu_Config.inverted(IntakeConstants.Shu_Inverted);
-        ShuShu_Config.encoder.positionConversionFactor(1);
-        ShuShu_Config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+        // Intake_ctrl Config
+        Intake_ctrl_Config.idleMode(SparkBaseConfig.IdleMode.kBrake);
+        Intake_ctrl_Config.inverted(IntakeConstants.Intake_ctrl_Inverted);
+        Intake_ctrl_Config.encoder.positionConversionFactor(1);
+        Intake_ctrl_Config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
         
-        ShuShu_Config.closedLoop.pid(0.025, 0.0, 0.0, ClosedLoopSlot.kSlot2);
-        ShuShu_Config.closedLoop.pid(1, 0.0, 0.0, ClosedLoopSlot.kSlot1);  
+        Intake_ctrl_Config.closedLoop.pid(0.025, 0.0, 0.0, ClosedLoopSlot.kSlot2);
+        Intake_ctrl_Config.closedLoop.pid(1, 0.0, 0.0, ClosedLoopSlot.kSlot1);  
 
-        ShuShu.configure(ShuShu_Config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+        Intake_ctrl.configure(Intake_ctrl_Config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
 
         // ShuShu Encoder Config
-        ShuShu_Encoder_Config.inverted(Constants.IntakeConstants.Shu_Inverted);
-        ShuShu_Encoder_Config.positionConversionFactor(360);
+        Intake_ctrl_Encoder_Config.inverted(Constants.IntakeConstants.Intake_ctrl_Inverted);
+        Intake_ctrl_Encoder_Config.positionConversionFactor(360);
 
-        CC.setNeutralMode(NeutralModeValue.Brake);
-        CC.setInverted(IntakeConstants.CC_Inverted);
+        Roller.setNeutralMode(NeutralModeValue.Brake);
+        Roller.setInverted(IntakeConstants.Roller_Inverted);
+
+        // CC_Config.apply(new FeedbackConfigs()
+        //         .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor));
+
+        // set maximum acceleration and velocity
+        
+        // // Sets the mechanism position of the device in mechanism rotations.
+        // ShuShuConfig.setPosition(0);
+        // CCConfig.setPosition(0);
+
+        // PIDConfig
     }
 
     public double getPosition(){
-        return ShuShuEncoder.getPosition();
+        return Intake_ctrl_Encoder.getPosition();
     }
 
     public double getFurtherest(){
-        return (1.3 - ShuShuEncoder.getPosition());
+        return (1.3 - Intake_ctrl_Encoder.getPosition());
     }
  
     public double getShortest(){
-        return (1.3 - ShuShuEncoder.getPosition() - 1.3);
+        return (1.3 - Intake_ctrl_Encoder.getPosition() - 1.3);
     }
     
-    public void ShuShu(){
+    public void Intake_out(){
         // final SparkClosedLoopController ShuShu_PID = ShuShu.getClosedLoopController();
         // ShuShu_Config.closedLoop.pid(0.025, 0.0, 0.0);
-        ShuShu_PID.setReference(getFurtherest() * 2 * Math.PI, ControlType.kPosition, ClosedLoopSlot.kSlot2); 
+        Intake_ctrl_PID.setReference(getFurtherest() * 2 * Math.PI, ControlType.kPosition, ClosedLoopSlot.kSlot2); 
    }
 
-    public void BomBom(){
+    public void Intake_back(){
         // final SparkClosedLoopController ShuShu_PID = ShuShu.getClosedLoopController();
         // ShuShu_Config.closedLoop.pid(0.05, 0.0, 0.0);
-        ShuShu_PID.setReference(getShortest() * 2 * Math.PI, ControlType.kPosition, ClosedLoopSlot.kSlot1);
+        Intake_ctrl_PID.setReference(getShortest() * 2 * Math.PI, ControlType.kPosition, ClosedLoopSlot.kSlot1);
 
     }
 
-    public void ShuBom(){
+    public void Intake_hold(){
         // ShuShu_PID.setReference(Constants.IntakeConstants.ShuShu_Middle,ControlType.kPosition);
         // ShuShu_PID.setReference(getFurtherest() * 2 * Math.PI, ControlType.kPosition);
 
     }
 
-    public void Shu(){
-        ShuShu.set(0.1);
+    public void step_out(){
+        Intake_ctrl.set(0.1);
     }
 
-    public void Bom(){
-        ShuShu.set(-0.2);
+    public void step_in(){
+        Intake_ctrl.set(-0.2);
     }
 
-    public void CC(){
-        CC.set(0.4);
+    public void suck(){
+        Roller.set(0.4);
     }
 
-    public void TT(){
-        CC.set(-0.6);
+    public void shot(){
+        Roller.set(-0.6);
     }
 
-    public void ShuC(){
-        ShuShu.set(0.08);
-        CC.set(0.8);
-    }
+    // public void ShuC(){
+    //     Intake_ctrl.set(0.08);
+    //     Roller.set(0.8);
+    // }
 
-    public void BomT(){
-        ShuShu.set(-0.08);
-        CC.set(-0.8);
-    }
+    // public void BomT(){
+    //     Intake_ctrl.set(-0.08);
+    //     Roller.set(-0.8);
+    // }
 
     public void Stop(){
-        ShuShu.set(0);
-        CC.set(0);
+        Intake_ctrl.set(0);
+        Roller.set(0);
     }
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("position", ShuShuEncoder.getPosition());
+        SmartDashboard.putNumber("position", Intake_ctrl_Encoder.getPosition());
     }
 }

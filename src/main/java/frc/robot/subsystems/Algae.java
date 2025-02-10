@@ -38,7 +38,6 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 // Karken Motor - for 
 public class Algae extends SubsystemBase {
     private final SparkMax ShuShu = new SparkMax(IntakeConstants.ShuShu_ID, MotorType.kBrushless);
-    // private final TalonFX CC = new TalonFX(IntakeConstants.CC_ID, "cantivore");
     private final TalonFX CC = new TalonFX(IntakeConstants.CC_ID, "rio");
 
     private final SparkMaxConfig ShuShu_Config;
@@ -82,17 +81,6 @@ public class Algae extends SubsystemBase {
 
         CC.setNeutralMode(NeutralModeValue.Brake);
         CC.setInverted(IntakeConstants.CC_Inverted);
-
-        // CC_Config.apply(new FeedbackConfigs()
-        //         .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor));
-
-        // set maximum acceleration and velocity
-        
-        // // Sets the mechanism position of the device in mechanism rotations.
-        // ShuShuConfig.setPosition(0);
-        // CCConfig.setPosition(0);
-
-        // PIDConfig
     }
 
     public double getPosition(){

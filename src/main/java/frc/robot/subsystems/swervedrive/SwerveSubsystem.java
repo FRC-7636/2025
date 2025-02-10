@@ -258,20 +258,9 @@ public class SwerveSubsystem extends SubsystemBase{
       swerveDrive.updateOdometry();
       swerveDrive.imuReadingCache.getValue().getZ();
       SmartDashboard.putNumber("imu", swerveDrive.imuReadingCache.getValue().getZ());
-      // System.out.println(getPose().getRotation().getDegrees());
       
       LimelightHelpers.getOrientation(swerveDrive);
     }
-    // SmartDashboard.putNumber("RY", val);
-    // SmartDashboard.putBoolean("reef", reef);
-    // if (LimelightHelpers.getFiducialID("") != 0){
-    // aimAt(1);
-    // getReefYaw();
-    // getYaw();
-    // getYawAfter();
-    // }
-    // SmartDashboard.putNumber("yaw", yaw);
-    // SmartDashboard.putNumber("after", yawafter);
 
     field.setRobotPose(getPose());
     SmartDashboard.putData("field2", field);
@@ -286,12 +275,6 @@ public class SwerveSubsystem extends SubsystemBase{
       Pose2d botPose = mt2.pose;
       SmartDashboard.putNumber("llX", botPose.getX());
       SmartDashboard.putNumber("llY", botPose.getY());
-      // Pose2d TagPose = vision.getTagPose();
-      // Transform2d Tag = TagPose.minus(new Pose2d(0, 1, Rotation2d.fromDegrees(0)));
-      // Transform2d BotToTag = botPose.minus(TagPose);
-      // Translation2d trans_BotToTag = BotToTag.getTranslation();
-      // Rotation2d rota_BotToTag = BotToTag.getRotation();
-      // SmartDashboard.putNumber("BotToTag", rota_BotToTag.getDegrees());
     }
     SmartDashboard.putNumber("heading", getHeading().getDegrees());
 
@@ -304,7 +287,6 @@ public class SwerveSubsystem extends SubsystemBase{
   }
 
   public void setPose(){
-
   }
 
   public void setupPathPlanner(){

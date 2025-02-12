@@ -1,10 +1,7 @@
-package frc.robot.commands.auto;
-
-import java.lang.ModuleLayer.Controller;
+package frc.robot.commands.Auto;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.limelight;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -24,7 +21,7 @@ public class REEF2 extends Command{
     public void excute(){
         if(Math.abs(LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY()) < 1){
             controller.enableContinuousInput(-Math.PI, Math.PI);
-            swerve.aimTarget();
+            // swerve.aimTarget();
             stop = false;
         }
         else{

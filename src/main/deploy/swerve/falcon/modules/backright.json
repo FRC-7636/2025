@@ -7,17 +7,17 @@
   "drive": {
     "type": "krakenx60foc",
     "id": 3,
-    "canbus": "cantivore"
+    "canbus": "rio"
   },
   "angle": {
     "type": "krakenx60foc",
     "id": 13,
-    "canbus": "cantivore"
+    "canbus": "rio"
   },
   "encoder": {
     "type": "cancoder",
     "id": 3,
-    "canbus": "cantivore"
+    "canbus": "rio"
   },
   "inverted": {
     "drive": true,

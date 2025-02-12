@@ -71,26 +71,25 @@ public final class Constants{
   }
 
   // Subsystems Constants.
+    // Elevator Constants
+    public static class ElevatorConstants{
+        // Elevator ID
+        public static final int LeftMotor_ID = 21;
+        public static final int RightMotor_ID = 22;
 
-  // Elevator Constants
-  public static class ElevatorConstants{
-      // Elevator ID
-      public static final int LeftMotor_ID = 21;
-      public static final int RightMotor_ID = 22;
+        // Elevator Config
+        public static final boolean LeftMotor_Inverted = false;
+        public static final boolean RightMotor_Inverted = false;
 
-      // Elevator Config
-      public static final boolean LeftMotor_Inverted = false;
-      public static final boolean RightMotor_Inverted = false;
+        public static final double MAX_ACCEL = 0;
+        public static final double MAX_VELOCITY = 0;
 
-      public static final double MAX_ACCEL = 0;
-      public static final double MAX_VELOCITY = 0;
-
-      // Elevator PIDF
-      public static final double P = 0;
-      public static final double I = 0;
-      public static final double D = 0;
-      public static final double F = 0;
-  }
+        // Elevator PIDF
+        public static final double P = 0;
+        public static final double I = 0;
+        public static final double D = 0;
+        public static final double F = 0;
+    }
 
     public static class IntakeConstants{
         // Intake ID
@@ -103,17 +102,5 @@ public final class Constants{
         public static final double Intake_ctrl_Longest = 1.3;
         public static final double Intake_ctrl_Shortest = 0.0;
         public static final double Intake_ctrl_Middle = 0.12;
-
-        public static final double kSVolts = 0;
-        public static final double kGVolts = 0.33;
-        public static final double kVVoltSecondPerRad = 6.24;
-        public static final double kAVoltSecondSquaredPerRad = 0.04;
-
-        // Intake PIDF
-        // public static final double intake_P = 0.025;
-        // public static final double intake_I = 0;
-        // public static final double intake_D = 0;
-        // public static final double intake_F = 0;
     }
-  
 }

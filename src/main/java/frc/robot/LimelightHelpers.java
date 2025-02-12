@@ -1178,7 +1178,6 @@ public class LimelightHelpers {
 
     /////
     /////
-
     public static Pose3d getBotPose3d(String limelightName) {
         double[] poseArray = getLimelightNTDoubleArray(limelightName, "botpose");
         return toPose3D(poseArray);
@@ -1652,16 +1651,21 @@ public class LimelightHelpers {
     public static void getOrientation(SwerveDrive swerve){
         boolean doRejectUpdate = false;
         SetRobotOrientation("", swerve.getYaw().getDegrees(), 0, 0, 0, 0, 0);
-        PoseEstimate mt2 = getBotPoseEstimate_wpiBlue_MegaTag2("");
+        SetRobotOrientation("two", swerve.getYaw().getDegrees(), 0, 0, 0, 0, 0);
+        PoseEstimate megatag = getBotPoseEstimate_wpiBlue_MegaTag2("");
+        PoseEstimate megatag2 = getBotPoseEstimate_wpiBlue_MegaTag2("two");
+
         if(Math.abs((swerve.getGyro().getYawAngularVelocity().magnitude())) > 720 ){
             doRejectUpdate = true;
         }
-        if(mt2 == null || mt2.tagCount == 0){
+        if(megatag == null || megatag.tagCount == 0 || megatag2 == null || megatag2.tagCount == 0){
             doRejectUpdate = true;
         }
         if(!doRejectUpdate){
             swerve.setVisionMeasurementStdDevs(VecBuilder.fill(0.005, 0.003, 9999999));
-            swerve.addVisionMeasurement(mt2.pose, Utils.fpgaToCurrentTime(mt2.timestampSeconds));
+            swerve.addVisionMeasurement(megatag.pose, Utils.fpgaToCurrentTime(megatag.timestampSeconds));
+            swerve.addVisionMeasurement(megatag2.pose, Utils.fpgaToCurrentTime(megatag2.timestampSeconds));
+
         }
     }
 }

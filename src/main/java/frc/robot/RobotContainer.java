@@ -6,22 +6,25 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 
-import frc.robot.commands.auto.AutoDrive;
-import frc.robot.commands.auto.AutoDriveToBarge;
-import frc.robot.commands.auto.AutoToReef;
-import frc.robot.commands.auto.REEF2;
-import frc.robot.commands.auto.Reef;
+import frc.robot.commands.Auto.AutoDrive;
+import frc.robot.commands.Auto.AutoDriveToBarge;
+import frc.robot.commands.Auto.AutoToReef;
+import frc.robot.commands.Auto.REEF2;
+import frc.robot.commands.Auto.Reef;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Climber;
@@ -107,33 +110,27 @@ public class RobotContainer{
    * Clone's the angular velocity input stream and converts it to a fieldRelative
    * input stream.
    */
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(test::getRightX,
-      test::getRightY)
-      .headingWhile(true);
-
-  // Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
-  //   test.getLeftY() * -2,
-  //   test.getLeftX() * -2, 
-  //   test.getRightX() * -2
-  //   );
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(
+                                                                                              test::getRightX,
+                                                                                              test::getRightY)
+                                                                                              .headingWhile(true);
 
   Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
-    test.getLeftY() * 0,
-    test.getLeftX() * 0, 
-    test.getRightX() * 0
-    );
+                                                                        test.getLeftY() * -5,
+                                                                        test.getLeftX() * -5, 
+                                                                        test.getRightX() * -12
+                                                                        );
 
   // Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
-  //   test.getLeftY() * -1,
-  //   test.getLeftX() * -1, 
-  //   test.getRightX() * 10
-  // )
+                                                                        // test.getLeftY() * 0,
+                                                                        // test.getLeftX() * 0, 
+                                                                        // test.getRightX() * 0
+                                                                        // );
 
   // Applies deadbands and inverts controls because joysticks are back-right positive while robot controls are front-left positive
   // left stick controls translation, right stick controls the desired angle NOT angular rotation
   
   Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(fieldRelativeSpeeds);
-
   // Applies deadbands and inverts because joysticks are back-right positive while robot controls are front-left positive
   // left stick controls translation, right stick controls the angular velocity of the robot
   
@@ -142,12 +139,12 @@ public class RobotContainer{
   Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
 
   SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
-      () -> -test.getLeftY(),
-      () -> -test.getLeftX())
-      .withControllerRotationAxis(() -> test.getRawAxis(2))
-      .deadband(OperatorConstants.DEADBAND)
-      .scaleTranslation(0.8)
-      .allianceRelativeControl(true);
+                                                                    () -> -test.getLeftY(),
+                                                                    () -> -test.getLeftX())
+                                                                    .withControllerRotationAxis(() -> test.getRawAxis(2))
+                                                                    .deadband(OperatorConstants.DEADBAND)
+                                                                    .scaleTranslation(0.8)
+                                                                    .allianceRelativeControl(true);
   // Derive the heading axis with math!
   SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
                                            .withControllerHeadingAxis(() -> Math.sin(test.getRawAxis(2) 
@@ -180,17 +177,14 @@ public class RobotContainer{
    * Flight joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(test, 2).onTrue(new InstantCommand(drivebase::setupPathPlanner));
-    new JoystickButton(test, 1).onTrue(autoDriveToBarge);
-    new JoystickButton(test, 3).whileTrue(drivebase.driveToDistanceCommand(1,1));
-    // new JoystickButton(test, 1).onTrue(new InstantCommand(algae::Intake_out));
-    // new JoystickButton(test, 2).onTrue(new InstantCommand(algae::Intake_back));
-    // new JoystickButton(test, 4).onTrue(new InstantCommand(algae::Intake_hold));
-    // new JoystickButton(test, 5).whileTrue(new InstantCommand(algae::step_out)).onFalse(new InstantCommand(algae::Stop));
-    // new JoystickButton(test, 6).whileTrue(new InstantCommand(algae::step_in)).onFalse(new InstantCommand(algae::Stop));
-    // new JoystickButton(test, 7).whileTrue(new InstantCommand(algae::shot)).onFalse(new InstantCommand(algae::Stop));
-    // new JoystickButton(test, 8).whileTrue(new InstantCommand(algae::suck)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 2).onTrue(new InstantCommand(drivebase::setupPathPlanner));
+    // new JoystickButton(test, 1).onTrue(autoDriveToBarge);
+    // new JoystickButton(test, 3).whileTrue(drivebase.driveToDistanceCommand(1,1));
 
+    // new JoystickButton(test, 1).whileTrue(new InstantCommand(algae::Intake_out)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 2).whileTrue(new InstantCommand(algae::Intake_back)).onFalse(new InstantCommand(algae::Stop));
+
+    
     // (Condition) ? Return-On-True :
     //  Return-on-False
     drivebase.setDefaultCommand(
@@ -207,7 +201,7 @@ public class RobotContainer{
     //   driverXbox.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
     //   driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
     //   driverXbox.back().whileTrue(drivebase.centerModulesCommand());
-    //   driverXbox.leftBumper().onTrue(Commands.none());
+      // driverXbox.leftBumper().onTrue(Commands.none());
     //   driverXbox.rightBumper().onTrue(Commands.none());
     // } else {
       // driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));

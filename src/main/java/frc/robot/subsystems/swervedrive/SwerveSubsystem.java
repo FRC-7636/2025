@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.Meter;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -21,7 +20,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,12 +30,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
@@ -52,15 +46,11 @@ import frc.robot.subsystems.swervedrive.Vision.Cameras;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.PublicKey;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
-import javax.xml.crypto.KeySelector.Purpose;
 
 import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -76,11 +66,8 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase{
   public double val;
-  public boolean reef = false;
-  public double yaw;
-  public double yawafter;
-
-  public Field2d field = new Field2d();
+  public PoseEstimate BotPose1;
+  public PoseEstimate BotPose2;
   /**
    * Swerve drive object.
    */
@@ -88,19 +75,13 @@ public class SwerveSubsystem extends SubsystemBase{
   /**
    * AprilTag field layout.
    */
+  public Field2d Bot_Pose = new Field2d();
   private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
   /**
    * Enable vision odometry updates while driving.
    */
   private final boolean visionDriveTest = true;
-  // private ShuffleboardTab Tab = Shuffleboard.getTab("drive");
-  // private GenericEntry Drive_P = Tab.add("drive_P", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
-  // private GenericEntry Drive_I = Tab.add("drive_I", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
-  // private GenericEntry Drive_D = Tab.add("drive_D", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
-
-  // private GenericEntry Turn_P = Tab.add("Turn_P", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
-  // private GenericEntry Turn_I = Tab.add("Turn_I", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
-  // private GenericEntry Turn_D = Tab.add("Turn_D", 0).withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0 , "max",100 )).getEntry();
+ 
   private PIDController drive = new PIDController(0, 0, 0);
   private PIDController turn = new PIDController(0, 0, 0)
   ;
@@ -180,16 +161,12 @@ public class SwerveSubsystem extends SubsystemBase{
                                                                Meter.of(0)),
                                                                Rotation2d.fromDegrees(0)));
   }
-
-  public void fieldPose(){
-    // field = new Field2d();
-
-    // field.setRobotPose(getPose());
-    // SmartDashboard.putData("field", field);
-    // System.out.println("x" + getPose().getX());
-    // System.out.println("y" + getPose().getY());
+  
+  public void setHead() {
+    swerveDrive.setGyro(new Rotation3d(0, 0, Math.PI));
   }
 
+  /*
   public void aim() {
     PIDController controller = new PIDController(4, 0, 0);
     controller.enableContinuousInput(-Math.PI, Math.PI);
@@ -202,28 +179,28 @@ public class SwerveSubsystem extends SubsystemBase{
     val = LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY();
         while(Math.abs(val) > 1) {
           drive(delta_Translation2d, controller.calculate(val), false);
-          reef = true;
+          boolean reef = true;
         }
     controller.close();
   }
+  */
 
-  public void setHead() {
-    swerveDrive.setGyro(new Rotation3d(0, 0, Math.PI));
-  }
-
+  /*
   public Command aimAt(double tolerance){
     SwerveController controller = swerveDrive.getSwerveController();
     // PIDController pidController = new PIDController(5, 0, 0);
     return run(
         () -> {
-          ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(5, 5,
-                                                                       controller.headingCalculate(getHeading().getRadians(),
-                                                                               getReefYaw().getRadians()),
-                                                                               getHeading());
-                                                                               drive(speeds);
-        }).until(() -> Math.abs(getReefYaw().minus(getHeading()).getDegrees()) < tolerance);
+              ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(5, 5,
+                                                                          controller.headingCalculate(getHeading().getRadians(),
+                                                                                                      getReefYaw().getRadians()),
+                                                                                                      getHeading());
+                                                                                                      drive(speeds);
+            }).until(() -> Math.abs(getReefYaw().minus(getHeading()).getDegrees()) < tolerance);
   }
+  */
 
+  /*
   public Rotation2d getReefYaw(){
     if (LimelightHelpers.getFiducialID("") != -1){
       int allianceAprilTag = (int) LimelightHelpers.getFiducialID("");
@@ -236,12 +213,15 @@ public class SwerveSubsystem extends SubsystemBase{
     }
     return new Rotation2d();
   }
+  */
 
+  /*
   public Command aimTarget(){
     return run(() -> {if (LimelightHelpers.getFiducialID("") != 0){
                             drive(getTargetSpeeds(4, 4, Rotation2d.fromDegrees(LimelightHelpers.getTargetPose3d_RobotSpace("").getRotation().getY()))); // Not sure if this will work, more math may be required.
                       }});
     }
+  */
 
   /**
    * Setup the photon vision class.
@@ -257,25 +237,41 @@ public class SwerveSubsystem extends SubsystemBase{
     {
       swerveDrive.updateOdometry();
       swerveDrive.imuReadingCache.getValue().getZ();
-      SmartDashboard.putNumber("imu", swerveDrive.imuReadingCache.getValue().getZ());
+      // SmartDashboard.putNumber("imu", swerveDrive.imuReadingCache.getValue().getZ());
       
       LimelightHelpers.getOrientation(swerveDrive);
     }
 
-    field.setRobotPose(getPose());
-    SmartDashboard.putData("field2", field);
     getPose();
-    fieldPose();
+    Bot_Pose.setRobotPose(getPose());
+    SmartDashboard.putData("Bot_Pose", Bot_Pose);
     SmartDashboard.putNumber("X", getPose().getX());
     SmartDashboard.putNumber("Y", getPose().getY());
+    SmartDashboard.putNumber("Rotation", getPose().getRotation().getDegrees());
 
-
-    PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
-    if(mt2 != null){
-      Pose2d botPose = mt2.pose;
+    BotPose1 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+    BotPose2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+    
+    if(BotPose2 == null){
+      Pose2d botPose = BotPose1.pose;
       SmartDashboard.putNumber("llX", botPose.getX());
       SmartDashboard.putNumber("llY", botPose.getY());
     }
+    else if(BotPose1 == null){
+      Pose2d botPose = BotPose2.pose;
+      SmartDashboard.putNumber("llX", botPose.getX());
+      SmartDashboard.putNumber("llY", botPose.getY());
+    }
+    else{
+      Pose2d avgPos = new Pose2d(
+                                (BotPose1.pose.getX() + BotPose2.pose.getX()) / 2,
+                                (BotPose1.pose.getY() + BotPose2.pose.getY()) / 2,
+                                 BotPose1.pose.getRotation().plus(BotPose2.pose.getRotation()).div(2)
+);
+      SmartDashboard.putNumber("llX", BotPose1.pose.getX());
+      SmartDashboard.putNumber("llY", BotPose2.pose.getY());
+    }
+
     SmartDashboard.putNumber("heading", getHeading().getDegrees());
 
     SmartDashboard.putData("drive", drive);
@@ -323,7 +319,7 @@ public class SwerveSubsystem extends SubsystemBase{
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
           // PPHolonomicController is% the built in path following controller for holonomic drive trains
-          new PIDConstants(4, 0, 0.1, 20),
+          new PIDConstants(4, 0, 0.1, 0),
           // Translation PID constants
           new PIDConstants(5, 0, 0, 0)
           // Rotation PID constants

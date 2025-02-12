@@ -17,11 +17,11 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 
-import frc.robot.commands.Auto.AutoDrive;
-import frc.robot.commands.Auto.AutoDriveToBarge;
-import frc.robot.commands.Auto.AutoToReef;
-import frc.robot.commands.Auto.REEF2;
-import frc.robot.commands.Auto.Reef;
+import frc.robot.commands.auto.AutoDrive;
+import frc.robot.commands.auto.AutoDriveToBarge;
+import frc.robot.commands.auto.AutoToReef;
+import frc.robot.commands.auto.REEF2;
+import frc.robot.commands.auto.Reef;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.Climber;
@@ -180,20 +180,16 @@ public class RobotContainer{
    * Flight joysticks}.
    */
   private void configureBindings() {
-    // new JoystickButton(test, 2).onTrue(new InstantCommand(drivebase::setupPathPlanner));
-    // new JoystickButton(test, 1).onTrue(autoDriveToBarge);
-    // new JoystickButton(test, 3).whileTrue(drivebase.driveToDistanceCommand(1,1));
-    
-    new JoystickButton(test, 1).onTrue(new InstantCommand(algae::ShuShu));
-    new JoystickButton(test, 2).onTrue(new InstantCommand(algae::BomBom));
-    new JoystickButton(test, 3).whileTrue(new InstantCommand(algae::CC)).onFalse(new InstantCommand(algae::Stop));
-    new JoystickButton(test, 4).whileTrue(new InstantCommand(algae::TT)).onFalse(new InstantCommand(algae::Stop));
-    // new JoystickButton(test, 5).onTrue(new InstantCommand(algae::ShuBom));
-    // new JoystickButton(test, 6).whileTrue(new InstantCommand(algae::Shu)).onFalse(new InstantCommand(algae::Stop));
-    // new JoystickButton(test, 7).whileTrue(new InstantCommand(algae::Bom)).onFalse(new InstantCommand(algae::Stop));
-    // new JoystickButton(test, 8).onTrue(new InstantCommand(algae::Stop));
-    // new JoystickButton(test, 5).whileTrue(new InstantCommand(algae::ShuC));
-    // new JoystickButton(test, 6).whileTrue(new InstantCommand(algae::BomT));
+    new JoystickButton(test, 2).onTrue(new InstantCommand(drivebase::setupPathPlanner));
+    new JoystickButton(test, 1).onTrue(autoDriveToBarge);
+    new JoystickButton(test, 3).whileTrue(drivebase.driveToDistanceCommand(1,1));
+    // new JoystickButton(test, 1).onTrue(new InstantCommand(algae::Intake_out));
+    // new JoystickButton(test, 2).onTrue(new InstantCommand(algae::Intake_back));
+    // new JoystickButton(test, 4).onTrue(new InstantCommand(algae::Intake_hold));
+    // new JoystickButton(test, 5).whileTrue(new InstantCommand(algae::step_out)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 6).whileTrue(new InstantCommand(algae::step_in)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 7).whileTrue(new InstantCommand(algae::shot)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 8).whileTrue(new InstantCommand(algae::suck)).onFalse(new InstantCommand(algae::Stop));
 
     // (Condition) ? Return-On-True :
     //  Return-on-False

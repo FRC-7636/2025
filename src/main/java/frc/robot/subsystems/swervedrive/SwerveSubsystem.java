@@ -139,8 +139,8 @@ public class SwerveSubsystem extends SubsystemBase{
       // Stop the odometry thread if we are using vision that way we can synchronize updates better.
       swerveDrive.stopOdometryThread();
     }
-    // resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(getPose().getRotation().getDegrees())));
-    resetOdometry(new Pose2d(2.901, 4.301, Rotation2d.fromDegrees(0)));
+    resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(getPose().getRotation().getDegrees())));
+    // resetOdometry(new Pose2d(2.175, 5.351, Rotation2d.fromDegrees(0)));
 
     setupPathPlanner();
 
@@ -268,8 +268,9 @@ public class SwerveSubsystem extends SubsystemBase{
                                 (BotPose1.pose.getY() + BotPose2.pose.getY()) / 2,
                                  BotPose1.pose.getRotation().plus(BotPose2.pose.getRotation()).div(2)
 );
-      SmartDashboard.putNumber("llX", BotPose1.pose.getX());
-      SmartDashboard.putNumber("llY", BotPose2.pose.getY());
+      SmartDashboard.putNumber("llX", (BotPose1.pose.getX() + BotPose2.pose.getX()) / 2);
+      SmartDashboard.putNumber("llY", (BotPose1.pose.getY() + BotPose2.pose.getY()) / 2);
+      SmartDashboard.putNumber("Rota", (BotPose1.pose.getRotation().getDegrees() + BotPose2.pose.getRotation().getDegrees() / 2));
     }
 
     SmartDashboard.putNumber("heading", getHeading().getDegrees());
@@ -352,78 +353,6 @@ public class SwerveSubsystem extends SubsystemBase{
     // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
     // PathfindingCommand.warmupCommand().schedule();
   }
-
-
-  // /**
-  //  * Setup AutoBuilder for PathPlanner.
-  //  */
-  // public void setupPathPlanner(){
-  //   // Load the RobotConfig from the GUI settings. You should probably
-  //   // store this in your Constants file
-  //   RobotConfig config;
-  //   try{
-  //     config = RobotConfig.fromGUISettings();
-
-  //     final boolean enableFeedforward = true;
-  //     // Configure AutoBuilder last
-  //     AutoBuilder.configure(
-  //         this::getPose,
-  //         // Robot pose supplier
-  //         this::resetOdometry,
-  //         // Method to reset odometry (will be called if your auto has a starting pose)
-  //         this::getRobotVelocity,
-  //         // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-  //         (speedsRobotRelative, moduleFeedForwards) -> {
-  //           if (enableFeedforward)
-  //           {
-  //             swerveDrive.drive(
-  //                               speedsRobotRelative,
-  //                               swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
-  //                               moduleFeedForwards.linearForces()
-  //                              );
-  //           } else
-  //           {
-  //             swerveDrive.setChassisSpeeds(speedsRobotRelative);
-  //           }
-  //         },
-  //         // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-  //         new PPHolonomicDriveController(
-  //         // PPHolonomicController is the built in path following controller for holonomic drive trains
-  //         new PIDConstants(0.5, 0.0, 0.0),
-  //         // Translation PID constants
-  //         new PIDConstants(0.5, 0.0, 0.0)
-  //         // Rotation PID constants
-  //         ),
-  //         config,
-  //         // The robot configuration
-  //         () -> {
-  //           // Boolean supplier that controls when the path will be mirrored for the red alliance
-  //           // This will flip the path being followed to the red side of the field.
-  //           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-  //           var alliance = DriverStation.getAlliance();
-  //           if (alliance.isPresent())
-  //           {
-  //             return alliance.get() == DriverStation.Alliance.Red;
-  //           }
-  //           return false;
-  //         },
-  //         this
-  //         // Reference to this subsystem to set requirements
-  //     );
-
-  //   } catch (Exception e)
-  //   {
-  //     // Handle exception as needed
-  //     e.printStackTrace();
-  //   }
-
-  //   //Preload PathPlanner Path finding
-  //   // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
-  //   PathfindingCommand.warmupCommand().schedule();
-  // }
-
-  
 
   /**
    * Get the distance to the speaker.

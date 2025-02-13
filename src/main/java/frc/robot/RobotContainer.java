@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 
+import frc.robot.commands.Auto.AutoPath;
 import frc.robot.commands.Auto.AutoDrive;
 import frc.robot.commands.Auto.AutoDriveToBarge;
 import frc.robot.commands.Auto.AutoToReef;
@@ -35,6 +36,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.auto.NamedCommands;
@@ -66,8 +68,9 @@ public class RobotContainer{
   private final Elevator elevator = new Elevator();
   private final limelight limelight = new limelight();
 
-  private final AutoDriveToBarge autoDriveToBarge = new AutoDriveToBarge(drivebase, limelight);
-  private final AutoDrive autoDrive = new AutoDrive(drivebase, limelight, vision);
+  private final AutoDrive autoDrive = new AutoDrive(drivebase);
+  private final AutoDriveToBarge autoDriveToBarge = new AutoDriveToBarge(drivebase);
+  private final AutoPath autoPath = new AutoPath(drivebase, drivebase.getSwerveDrive());
   private final AutoToReef autoToReef = new AutoToReef(drivebase);
   private final Reef reef = new Reef(drivebase, limelight, vision);
   private final REEF2 reef2 = new REEF2(drivebase, limelight);
@@ -116,9 +119,9 @@ public class RobotContainer{
                                                                                               .headingWhile(true);
 
   Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
-                                                                        test.getLeftY() * -5,
-                                                                        test.getLeftX() * -5, 
-                                                                        test.getRightX() * -12
+                                                                        test.getLeftY() * -2,
+                                                                        test.getLeftX() * -2, 
+                                                                        test.getRightX() * -5
                                                                         );
 
   // Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
@@ -155,8 +158,7 @@ public class RobotContainer{
   Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleSim);
 
   public RobotContainer() {
-    NamedCommands.registerCommand("test", autoToReef);
-
+    // NamedCommands.registerCommand("test", autoToReef);
     // Configure the trigger bindings
     configureBindings();
     drivebase.setDefaultCommand(closedAbsoluteDriveAdv);
@@ -177,14 +179,22 @@ public class RobotContainer{
    * Flight joysticks}.
    */
   private void configureBindings() {
-    // new JoystickButton(test, 2).onTrue(new InstantCommand(drivebase::setupPathPlanner));
-    // new JoystickButton(test, 1).onTrue(autoDriveToBarge);
-    // new JoystickButton(test, 3).whileTrue(drivebase.driveToDistanceCommand(1,1));
+    new JoystickButton(test, 2).onTrue(autoPath);
+    new JoystickButton(test, 1).onTrue(autoDriveToBarge);
+    new JoystickButton(test, 3).onTrue(autoToReef);
+    new JoystickButton(test, 4).onTrue(autoDrive);
 
-    // new JoystickButton(test, 1).whileTrue(new InstantCommand(algae::Intake_out)).onFalse(new InstantCommand(algae::Stop));
-    // new JoystickButton(test, 2).whileTrue(new InstantCommand(algae::Intake_back)).onFalse(new InstantCommand(algae::Stop));
+    // Algae
+    // new JoystickButton(test, 1).whileTrue(new InstantCommand(algae::suck)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 2).whileTrue(new InstantCommand(algae::shot)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 3).whileTrue(new InstantCommand(algae::step_in)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 4).whileTrue(new InstantCommand(algae::step_out)).onFalse(new InstantCommand(algae::Stop));
 
-    
+    // Climber
+    // Coral
+    // Elevator
+    // 大手臂?
+
     // (Condition) ? Return-On-True :
     //  Return-on-False
     drivebase.setDefaultCommand(

@@ -63,11 +63,11 @@ public final class Constants{
           public static final double D = 0.00;
           public static final double I_ZONE = 0.0;
       }
-
   }
   
   public static class LimelightConstants{
-      public static final String Name = "limelight";
+      public static final String LL1 = "limelight";
+      public static final String LL2 = "limelight-two";
   }
 
   // Subsystems Constants.
@@ -77,9 +77,18 @@ public final class Constants{
         public static final int LeftMotor_ID = 21;
         public static final int RightMotor_ID = 22;
 
+        public static final int LeftEncoder_ID = 26;
+        public static final int RightEncoder_ID = 27;
+
         // Elevator Config
         public static final boolean LeftMotor_Inverted = false;
         public static final boolean RightMotor_Inverted = false;
+
+        public static final double floor = 0;
+        public static final double L1 = 0;
+        public static final double L2 = 0;
+        public static final double L3 = 0;
+        public static final double L4 = 0;
 
         public static final double MAX_ACCEL = 0;
         public static final double MAX_VELOCITY = 0;
@@ -97,10 +106,21 @@ public final class Constants{
         public static final int Roller_ID = 43;
 
         // Intake Config
-        public static final boolean Intake_ctrl_Inverted = false;
+        public static final boolean Intake_ctrl_Inverted = true;
         public static final boolean Roller_Inverted = false;
         public static final double Intake_ctrl_Longest = 1.3;
         public static final double Intake_ctrl_Shortest = 0.0;
         public static final double Intake_ctrl_Middle = 0.12;
+    }
+
+    public static class CoralConstants{
+        // Coral ID
+        public static final int CoralMotor_ID = 41;
+        public static final int CoralEncoder_ID = 42;
+
+        // Coral Config
+        public static final boolean coral_Inverted = false;
+        public static final double Coral_Open = 0;
+        public static final double Coral_Close = 0;
     }
 }

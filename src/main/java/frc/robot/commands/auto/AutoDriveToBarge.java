@@ -3,18 +3,11 @@ package frc.robot.commands.Auto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.limelight;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class AutoDriveToBarge extends SequentialCommandGroup {
-    // private PIDController driveCtrl = new PIDController(Constants.AutoConstants.AutoDrivePIDF.P, 
-    //                                                     Constants.AutoConstants.AutoDrivePIDF.I, 
-    //                                                     Constants.AutoConstants.AutoDrivePIDF.D);
-    // private PIDController turnCtrl = new PIDController(Constants.AutoConstants.AutoTurnPIDF.P, 
-    //                                                    Constants.AutoConstants.AutoTurnPIDF.I, 
-    //                                                    Constants.AutoConstants.AutoTurnPIDF.D);
 
-    public AutoDriveToBarge(SwerveSubsystem swerve, limelight limelight){
+    public AutoDriveToBarge(SwerveSubsystem swerve){
         // Pose2d BotPose = LimelightHelpers.getBotPose2d_wpiBlue("");
 
         // Rotation2d tagRotation2d = new Rotation2d(Math.toRadians(90));
@@ -51,8 +44,6 @@ public class AutoDriveToBarge extends SequentialCommandGroup {
 
             // addCommands(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(1.642, 3.348, Rotation2d.fromDegrees(0)))));
             addCommands( swerve.driveToPose(new Pose2d(3.051, 4.251, Rotation2d.fromDegrees(0))));
-
-
         // }
     }
 }

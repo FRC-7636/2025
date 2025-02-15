@@ -25,7 +25,6 @@ public class AutoDrive extends Command{
         try {
             path = PathPlannerPath.fromPathFile("New New Path");
             swerve.getSwerveDrive().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
-            
         } catch (FileVersionException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

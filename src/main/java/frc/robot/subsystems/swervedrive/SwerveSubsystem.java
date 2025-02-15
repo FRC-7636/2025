@@ -253,9 +253,9 @@ public class SwerveSubsystem extends SubsystemBase{
     BotPose2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
     
     if(BotPose2 == null){
-      Pose2d botPose = BotPose1.pose;
-      SmartDashboard.putNumber("llX", botPose.getX());
-      SmartDashboard.putNumber("llY", botPose.getY());
+      // Pose2d botPose = BotPose1.pose;
+      // SmartDashboard.putNumber("llX", botPose.getX());
+      // SmartDashboard.putNumber("llY", botPose.getY());
     }
     else if(BotPose1 == null){
       Pose2d botPose = BotPose2.pose;

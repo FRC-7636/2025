@@ -6,17 +6,15 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.PS5Controller;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 
@@ -36,11 +34,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.function.Supplier;
-
-import com.pathplanner.lib.auto.NamedCommands;
-
 import swervelib.SwerveInputStream;
 
 /**
@@ -56,24 +50,24 @@ public class RobotContainer{
   // Controllers
   private final CommandXboxController driverXbox = new CommandXboxController(0);
   private final XboxController test = new XboxController(1);
-  private CommandXboxController testCtrl = new CommandXboxController(2);
-  private final PS5Controller PS5 = new PS5Controller(3);
+  // private CommandXboxController testCtrl = new CommandXboxController(2);
+  // private final PS5Controller PS5 = new PS5Controller(3);
   
   // Subsystems
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/falcon"));
-  private final Vision vision = new Vision();
+  // private final Vision vision = new Vision();
   private final Algae algae = new Algae();
-  private final Climber climber = new Climber();
-  private final Coral coral = new Coral();
-  private final Elevator elevator = new Elevator();
-  private final limelight limelight = new limelight();
+  // private final Climber climber = new Climber();
+  // private final Coral coral = new Coral();
+  // private final Elevator elevator = new Elevator();
+  // private final limelight limelight = new limelight();
 
   private final AutoDrive autoDrive = new AutoDrive(drivebase);
   private final AutoDriveToBarge autoDriveToBarge = new AutoDriveToBarge(drivebase);
   private final AutoPath autoPath = new AutoPath(drivebase, drivebase.getSwerveDrive());
   private final AutoToReef autoToReef = new AutoToReef(drivebase);
-  private final Reef reef = new Reef(drivebase, limelight, vision);
-  private final REEF2 reef2 = new REEF2(drivebase, limelight);
+  // private final Reef reef = new Reef(drivebase, limelight, vision);
+  // private final REEF2 reef2 = new REEF2(drivebase, limelight);
 
   // Applies deadbands and inverts controls because joysticks are back-right positive while robot controls are front-left positive.
   // left stick controls translation, right stick controls the rotational velocity, buttons are quick rotation positions to different ways to face.
@@ -179,16 +173,18 @@ public class RobotContainer{
    * Flight joysticks}.
    */
   private void configureBindings() {
-    new JoystickButton(test, 2).onTrue(autoPath);
-    new JoystickButton(test, 1).onTrue(autoDriveToBarge);
-    new JoystickButton(test, 3).onTrue(autoToReef);
-    new JoystickButton(test, 4).onTrue(autoDrive);
+    // new JoystickButton(test, 2).onTrue(autoPath);
+    // new JoystickButton(test, 1).onTrue(autoDriveToBarge);
+    // new JoystickButton(test, 3).onTrue(autoToReef);
+    // new JoystickButton(test, 4).onTrue(autoDrive);
 
     // Algae
-    // new JoystickButton(test, 1).whileTrue(new InstantCommand(algae::suck)).onFalse(new InstantCommand(algae::Stop));
-    // new JoystickButton(test, 2).whileTrue(new InstantCommand(algae::shot)).onFalse(new InstantCommand(algae::Stop));
-    // new JoystickButton(test, 3).whileTrue(new InstantCommand(algae::step_in)).onFalse(new InstantCommand(algae::Stop));
-    // new JoystickButton(test, 4).whileTrue(new InstantCommand(algae::step_out)).onFalse(new InstantCommand(algae::Stop));
+    new JoystickButton(test, 1).whileTrue(new InstantCommand(algae::suck)).onFalse(new InstantCommand(algae::Stop));
+    new JoystickButton(test, 2).whileTrue(new InstantCommand(algae::shoot)).onFalse(new InstantCommand(algae::Stop));
+    new JoystickButton(test, 3).whileTrue(new InstantCommand(algae::step_in)).onFalse(new InstantCommand(algae::Stop));
+    new JoystickButton(test, 4).whileTrue(new InstantCommand(algae::step_out)).onFalse(new InstantCommand(algae::Stop));
+    new JoystickButton(test, 5).onTrue(new InstantCommand(algae::Intake_out).alongWith(new WaitCommand(2).andThen(new InstantCommand(algae::Stop))));
+    new JoystickButton(test, 6).onTrue(new InstantCommand(algae::Intake_out));
 
     // Climber
     // Coral
@@ -196,6 +192,7 @@ public class RobotContainer{
     // 大手臂?
 
     // (Condition) ? Return-On-True :
+
     //  Return-on-False
     drivebase.setDefaultCommand(
         !RobotBase.isSimulation() ? driveFieldOrientedDirectAngle : driveFieldOrientedDirectAngleSim);

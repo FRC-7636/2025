@@ -8,7 +8,6 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.thethriftybot.ThriftyNova.PIDConfig;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,22 +16,21 @@ import frc.robot.Constants.ElevatorConstants;
 // Motor *2, 
 public class Elevator extends SubsystemBase{
 
-    private final TalonFX LeftMotor = new TalonFX(ElevatorConstants.LeftMotor_ID, "");
-    private final TalonFX RightMotor = new TalonFX(ElevatorConstants.RightMotor_ID, "");
+    private final TalonFX Left_Motor = new TalonFX(ElevatorConstants.LeftMotor_ID, "cantivore");
+    private final TalonFX Right_Motor = new TalonFX(ElevatorConstants.RightMotor_ID, "cantivore");
 
-    private final CANcoder LeftEncoder = new CANcoder(4, "cantivore");
-    private final CANcoder RightEncoder = new CANcoder(ElevatorConstants.RightEncoder_ID, "cantivore");
+    private final CANcoder Encoder = new CANcoder(ElevatorConstants.Encoder_ID, "cantivore");
 
 
     public Elevator(){
-        var LeftMotorConfig = LeftMotor.getConfigurator();
-        var RightMotorConfig = RightMotor.getConfigurator();
+        var LeftMotorConfig = Left_Motor.getConfigurator();
+        var RightMotorConfig = Right_Motor.getConfigurator();
 
-        LeftMotor.setNeutralMode(NeutralModeValue.Brake);
-        RightMotor.setNeutralMode(NeutralModeValue.Brake);
+        Left_Motor.setNeutralMode(NeutralModeValue.Brake);
+        Right_Motor.setNeutralMode(NeutralModeValue.Brake);
 
-        LeftMotor.setInverted(ElevatorConstants.LeftMotor_Inverted);
-        RightMotor.setInverted(ElevatorConstants.RightMotor_Inverted);
+        Left_Motor.setInverted(ElevatorConstants.LeftMotor_Inverted);
+        Right_Motor.setInverted(ElevatorConstants.RightMotor_Inverted);
 
         // set feedback sensor as integrated sensor
         LeftMotorConfig.apply(new FeedbackConfigs()
@@ -64,47 +62,47 @@ public class Elevator extends SubsystemBase{
     }
 
     public void position(){
-        LeftMotor.setControl(new MotionMagicDutyCycle(0));
-        RightMotor.setControl(new MotionMagicDutyCycle(0));
+        Left_Motor.setControl(new MotionMagicDutyCycle(0));
+        Right_Motor.setControl(new MotionMagicDutyCycle(0));
     }
 
     public double getAbsolutePosition(){
-        return LeftEncoder.getAbsolutePosition().getValueAsDouble();
+        return Encoder.getAbsolutePosition().getValueAsDouble();
     }
 
     public void setFloor(){
-        LeftMotor.setControl(new MotionMagicDutyCycle(ElevatorConstants.floor));
-        RightMotor.setControl(new MotionMagicDutyCycle(ElevatorConstants.floor));
+        Left_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.floor));
+        Right_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.floor));
     }
 
-    public void setL1(){
-        LeftMotor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L1));
-        RightMotor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L1));
+    public void setRL1(){
+        Left_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L1));
+        Right_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L1));
     }
 
-    public void setL2(){
-        LeftMotor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L2));
-        RightMotor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L2));
+    public void setRL2(){
+        Left_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L2));
+        Right_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L2));
     }
 
-    public void setL3(){
-        LeftMotor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L3));
-        RightMotor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L3));
+    public void setRL3(){
+        Left_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L3));
+        Right_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L3));
     }
 
-    public void setL4(){
-        LeftMotor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L4));
-        RightMotor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L4));
+    public void setRL4(){
+        Left_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L4));
+        Right_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L4));
     }
 
-    public void Up(){
-        LeftMotor.set(0.3);
-        RightMotor.set(0.3);
+    public void Eleva_Up(){
+        Left_Motor.set(0.3);
+        Right_Motor.set(0.3);
     }
 
-    public void Down(){
-        LeftMotor.set(-0.3);
-        RightMotor.set(-0.3);
+    public void Eleva_Down(){
+        Left_Motor.set(-0.3);
+        Right_Motor.set(-0.3);
     }
 
      @Override

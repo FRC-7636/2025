@@ -71,14 +71,46 @@ public final class Constants{
   }
 
   // Subsystems Constants.
+    public static class AlgaeConstants{
+        // Algae ID
+        public static final int Algae_Ctrl_ID = 21;
+        public static final int Algae_Roller_ID = 22;
+
+        // Algae Config
+        public static final boolean Algae_ctrl_Inverted = true;
+        public static final boolean Algae_Roller_Inverted = false;
+        public static final double Algae_Ctrl_Longest = 1.3;
+        public static final double Algae_Ctrl_Shortest = 0.0;
+        public static final double Algae_Ctrl_Middle = 0.12;
+    }
+
+    // Climber Constants
+    public static class ClimberConstants {
+        // Climber ID
+        public static final int Left_Motor_ID = 31;
+        public static final int RightMotor_ID = 32;
+
+        public static final int Encoder_ID = 33;
+        
+        // Climber Config
+        public static final boolean LeftMotor_Inverted = false;
+        public static final boolean RightMotor_Inverted = false;
+        public static final double Climb_Angle = 0;
+
+        // Climber PIDF
+        public static final double P = 0;
+        public static final double I = 0;
+        public static final double D = 0;
+        public static final double F = 0;
+    }
+
     // Elevator Constants
     public static class ElevatorConstants{
         // Elevator ID
-        public static final int LeftMotor_ID = 21;
-        public static final int RightMotor_ID = 22;
+        public static final int LeftMotor_ID = 41;
+        public static final int RightMotor_ID = 42;
 
-        public static final int LeftEncoder_ID = 26;
-        public static final int RightEncoder_ID = 27;
+        public static final int Encoder_ID = 43;
 
         // Elevator Config
         public static final boolean LeftMotor_Inverted = false;
@@ -100,27 +132,24 @@ public final class Constants{
         public static final double F = 0;
     }
 
-    public static class IntakeConstants{
-        // Intake ID
-        public static final int Intake_ctrl_ID = 31;
-        public static final int Roller_ID = 43;
-
-        // Intake Config
-        public static final boolean Intake_ctrl_Inverted = true;
-        public static final boolean Roller_Inverted = false;
-        public static final double Intake_ctrl_Longest = 1.3;
-        public static final double Intake_ctrl_Shortest = 0.0;
-        public static final double Intake_ctrl_Middle = 0.12;
-    }
-
     public static class CoralConstants{
         // Coral ID
-        public static final int CoralMotor_ID = 41;
-        public static final int CoralEncoder_ID = 42;
+        public static final int Coral_Motor_ID = 51;
+        public static final int Arm_Left_Motor = 52;
+        public static final int Arm_Right_Motor = 53;
+
+        public static final int Coral_Encoder_ID = 56;
+        public static final int Arm_Encder = 57;
 
         // Coral Config
-        public static final boolean coral_Inverted = false;
+        public static final boolean Coral_Inverted = false;
+        public static final boolean Arm_Left_Inverted = false;
+        public static final boolean Arm_Right_Inverted = false;
+        // Intake
         public static final double Coral_Open = 0;
         public static final double Coral_Close = 0;
+        // Arm
+        public static final double Arm_Station = 0;
+        public static final double Arm_Reef = 0;
     }
 }

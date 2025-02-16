@@ -84,6 +84,45 @@ public final class Constants{
         public static final double Algae_Ctrl_Middle = 0.12;
     }
 
+    public static class ArmConstants{
+        // Arm ID
+        public static final int Arm_Coral_ID = 31;
+        public static final int Arm_ID = 32;
+        
+        public static final int Arm_Coral_Encoder = 33;
+        public static final int Arm_Encoder_ID = 34;
+        // Arm Config 
+        public static final boolean Arm_Coral_Inverted = false;
+        public static final boolean Arm_Inverted = false;
+
+        public static final double Arm_StartUp = 0;
+        public static final double Arm_Station = 0;
+        public static final double Arm_RL1 = 0;
+        public static final double Arm_RL2 = 0;
+        public static final double Arm_RL3 = 0;
+        public static final double Arm_RL4 = 0;
+
+        public static final double Arm_Coral_StartUp = 0;
+        public static final double Arm_Coral_Station = 0;
+        public static final double Arm_Coral_RL1 = 0;
+        public static final double Arm_Coral_RL2 = 0;
+        public static final double Arm_Coral_RL3 = 0;
+        public static final double Arm_Coral_RL4 = 0;
+        
+        // Arm PIDF
+        public static final double Arm_P = 0;
+        public static final double Arm_I = 0;
+        public static final double Arm_D = 0;
+        public static final double Arm_F = 0;        
+
+        
+        // Arm Coral PIDF
+        public static final double Arm_Coral_P = 0;
+        public static final double Arm_Coral_I = 0;
+        public static final double Arm_Coral_D = 0;
+        public static final double Arm_Coral_F = 0;
+    }
+
     // Climber Constants
     public static class ClimberConstants {
         // Climber ID

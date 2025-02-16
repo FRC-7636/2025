@@ -13,7 +13,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.ElevatorConstants;
 
-// Motor * 1
+// Kraken Motor - for 
+// 2 Falcon 500 Motor - for
 public class Coral extends SubsystemBase{
     private final TalonFX Coral_Motor = new TalonFX(CoralConstants.Coral_Motor_ID, "cantivore");
     private final TalonFX Arm_Left_Motor = new TalonFX(CoralConstants.Arm_Left_Motor, "cantivore");

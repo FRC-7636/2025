@@ -179,10 +179,10 @@ public class RobotContainer{
     // new JoystickButton(test, 4).onTrue(autoDrive);
 
     // Algae
-    new JoystickButton(test, 1).whileTrue(new InstantCommand(algae::suck)).onFalse(new InstantCommand(algae::Stop));
-    new JoystickButton(test, 2).whileTrue(new InstantCommand(algae::shoot)).onFalse(new InstantCommand(algae::Stop));
-    new JoystickButton(test, 3).whileTrue(new InstantCommand(algae::step_in)).onFalse(new InstantCommand(algae::Stop));
-    new JoystickButton(test, 4).whileTrue(new InstantCommand(algae::step_out)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 1).whileTrue(new InstantCommand(algae::suck)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 2).whileTrue(new InstantCommand(algae::shoot)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 3).whileTrue(new InstantCommand(algae::step_in)).onFalse(new InstantCommand(algae::Stop));
+    // new JoystickButton(test, 4).whileTrue(new InstantCommand(algae::step_out)).onFalse(new InstantCommand(algae::Stop));
     new JoystickButton(test, 5).onTrue(new InstantCommand(algae::Intake_out).alongWith(new WaitCommand(2).andThen(new InstantCommand(algae::Stop))));
     new JoystickButton(test, 6).onTrue(new InstantCommand(algae::Intake_out));
 

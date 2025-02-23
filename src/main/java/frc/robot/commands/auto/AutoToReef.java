@@ -17,12 +17,13 @@ public class AutoToReef extends Command{
 
     @Override
     public void execute(){
-        // Commands.runOnce( () -> swerve.resetOdometry(new Pose2d(2.601, 3.301, Rotation2d.fromDegrees(0))), swerve);
+        Commands.runOnce( () -> swerve.resetOdometry(new Pose2d(2.601, 3.301, Rotation2d.fromDegrees(0))), swerve);
+        Commands.runOnce( () -> swerve.driveToPose(new Pose2d(2.901, 4.031, Rotation2d.fromDegrees(0))), swerve);
         // Commands.runOnce( () -> swerve.driveToPose(new Pose2d(2.901, 4.031, Rotation2d.fromDegrees(80.786))), swerve);
         // Commands.runOnce( () -> swerve.driveToPose(new Pose2d(2.901, 4.031, Rotation2d.fromDegrees(260.786))), swerve);
 
-        Commands.runOnce( () -> swerve.resetOdometry(new Pose2d(2.7151, 5.351, Rotation2d.fromDegrees(0))), swerve);
-        Commands.runOnce( () -> swerve.driveToPose(new Pose2d(3.7151, 5.351, Rotation2d.fromDegrees(80.786))), swerve);
+        // Commands.runOnce( () -> swerve.resetOdometry(new Pose2d(2.7151, 5.351, Rotation2d.fromDegrees(0))), swerve);
+        // Commands.runOnce( () -> swerve.driveToPose(new Pose2d(3.7151, 5.351, Rotation2d.fromDegrees(80.786))), swerve);
     }
 
     @Override

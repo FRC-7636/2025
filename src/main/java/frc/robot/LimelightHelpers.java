@@ -1598,7 +1598,7 @@ public class LimelightHelpers {
         });
     }
 
-    private static boolean SYNCH_TAKESNAPSHOT(String tableName, String snapshotName) {
+    private static boolean SYNCH_TAKESNAPSHOT(String tableName, String snapshotName){
         URL url = getLimelightURLString(tableName, "capturesnapshot");
         try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -1665,7 +1665,19 @@ public class LimelightHelpers {
             swerve.setVisionMeasurementStdDevs(VecBuilder.fill(0.005, 0.003, 9999999));
             swerve.addVisionMeasurement(megatag.pose, Utils.fpgaToCurrentTime(megatag.timestampSeconds));
             swerve.addVisionMeasurement(megatag2.pose, Utils.fpgaToCurrentTime(megatag2.timestampSeconds));
-
+        }
+        
+        if(megatag == null && megatag2 != null){
+            swerve.addVisionMeasurement(megatag2.pose, Utils.fpgaToCurrentTime(megatag2.timestampSeconds));
+        }
+        else if(megatag != null && megatag2 != null){
+            swerve.addVisionMeasurement(megatag.pose, Utils.fpgaToCurrentTime(megatag.timestampSeconds));
+        }
+        else if (megatag != null && megatag2 != null){
+            swerve.addVisionMeasurement(new Pose2d(new Translation2d((megatag.pose.getX() + megatag2.pose.getX()) / 2,
+                                                                     (megatag.pose.getY() + megatag2.pose.getY()) / 2),
+                                                   new Rotation2d(megatag.pose.getRotation().getDegrees() + megatag2.pose.getRotation().getDegrees())),
+                                        Utils.fpgaToCurrentTime(megatag.timestampSeconds));
         }
     }
 }

@@ -11,17 +11,18 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.CoralConstants;
-import frc.robot.Constants.ElevatorConstants;
 
 public class Arm extends SubsystemBase{
-    private final TalonFX Arm_Motor = new TalonFX(ArmConstants.Arm_ID, "cantivore");
-    private final TalonFX Arm_Coral_Motor = new TalonFX(ArmConstants.Arm_Coral_ID, "cantivore");
+    private final TalonFX Arm_Motor = new TalonFX(ArmConstants.Arm_ID, "XiuBengBai");
+    private final TalonFX Arm_Coral_Motor = new TalonFX(ArmConstants.Arm_Coral_ID, "XiuBengBai");
 
-    private final CANcoder Arm_Encoder = new CANcoder(ArmConstants.Arm_Encoder_ID, "cantivore");
-    private final CANcoder Arm_Coral_Encoder = new CANcoder(ArmConstants.Arm_Coral_Encoder, "cantivor");
+    private final CANcoder Arm_Encoder = new CANcoder(ArmConstants.Arm_Encoder_ID, "XiuBengBai");
+    private final CANcoder Arm_Coral_Encoder = new CANcoder(ArmConstants.Arm_Coral_Encoder, "XiuBengBai");
+
+    private double Arm_Pos = 0;
 
     public Arm(){
         var Arm_Motor_Config = Arm_Motor.getConfigurator();
@@ -41,13 +42,13 @@ public class Arm extends SubsystemBase{
 
         // set maximum acceleration and velocity        
         Arm_Motor_Config.apply(new MotionMagicConfigs()
-                .withMotionMagicAcceleration(ElevatorConstants.MAX_ACCEL)
-                .withMotionMagicCruiseVelocity(ElevatorConstants.MAX_VELOCITY));
+                .withMotionMagicAcceleration(ArmConstants.MAX_ACCEL)
+                .withMotionMagicCruiseVelocity(ArmConstants.MAX_VELOCITY));
         Arm_Coral_Motor_Config.apply(new MotionMagicConfigs()
-                .withMotionMagicAcceleration(ElevatorConstants.MAX_ACCEL)
-                .withMotionMagicCruiseVelocity(ElevatorConstants.MAX_VELOCITY));
+                .withMotionMagicAcceleration(ArmConstants.MAX_ACCEL)
+                .withMotionMagicCruiseVelocity(ArmConstants.MAX_VELOCITY));
     
-        // Sets the mechanism position of the device in mechanism rotations.
+        // // Sets the mechanism position of the device in mechanism rotations.
         Arm_Motor_Config.setPosition(0);
         Arm_Coral_Motor_Config.setPosition(0);
         
@@ -68,11 +69,13 @@ public class Arm extends SubsystemBase{
     }
 
     public double getArmPos(){
-        return Arm_Encoder.getAbsolutePosition().getValueAsDouble();
+        // return Arm_Encoder.getAbsolutePosition().getValueAsDouble();
+        return Arm_Motor.getPosition().getValueAsDouble();
     }
 
     public double getArmCoralPos(){
-        return Arm_Coral_Encoder.getAbsolutePosition().getValueAsDouble();
+        return Arm_Coral_Motor.getPosition().getValueAsDouble();
+        // return Arm_Coral_Encoder.getAbsolutePosition().getValueAsDouble();
     }
 
     // Arm 
@@ -89,7 +92,8 @@ public class Arm extends SubsystemBase{
     }
 
     public void Arm_RL2(){
-        Arm_Motor.setControl(new MotionMagicDutyCycle(ArmConstants.Arm_RL2));
+
+        Arm_Motor.setControl(new MotionMagicDutyCycle(25));
     }
 
     public void Arm_RL3(){
@@ -100,12 +104,30 @@ public class Arm extends SubsystemBase{
         Arm_Motor.setControl(new MotionMagicDutyCycle(ArmConstants.Arm_RL4));
     }
 
-    public void Arm_UP(){
-        Arm_Motor.set(0.3);
+    public void Arm_DOWN(){
+        Arm_Motor.set(-0.2);
+        Arm_Coral_Motor.set(-0.3);
     }
 
-    public void Arm_DOWN(){
-        Arm_Motor.set(0.3);
+    public void Arm_UP(){
+        Arm_Motor.set(0.2);
+        Arm_Coral_Motor.set(0.3);
+    }
+
+    public void Stop(){
+        Arm_Motor.set(0);
+        Arm_Coral_Motor.set(0);
+    }
+
+    public void Arm_Coral_UP(){
+        Arm_Coral_Motor.set(-0.2);
+        Arm_Motor.set(-0.2);
+    }
+
+    public void Arm_Coral_DOWN(){
+        Arm_Coral_Motor.set(0.2);
+        Arm_Motor.set(0.2);
+
     }
 
     // Arm Coral 
@@ -133,16 +155,18 @@ public class Arm extends SubsystemBase{
         Arm_Motor.setControl(new MotionMagicDutyCycle(ArmConstants.Arm_Coral_RL4));
     }
 
-    public void Arm_Coral_UP(){
-        Arm_Motor.set(0.3);
-    }
+    // public void Arm_Coral_UP(){
+    //     Arm_Motor.set(0.3);
+    // }
 
-    public void Arm_Coral_DOWN(){
-        Arm_Motor.set(0.3);
-    }
+    // public void Arm_Coral_DOWN(){
+    //     Arm_Motor.set(0.3);
+    // }
     @Override
     public void periodic(){
         getArmPos();
         getArmCoralPos();
+        SmartDashboard.putNumber("Arm_Pos", getArmPos());
+        SmartDashboard.putNumber("Arm_Coral_Pos", getArmCoralPos());
     }
 }

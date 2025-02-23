@@ -32,7 +32,7 @@ public class limelight extends SubsystemBase{
 
     public boolean getTag(){
         TagID = (int) LimelightHelpers.getFiducialID("");
-        TagID2 = (int) LimelightHelpers.getFiducialID("two");
+        TagID2 = (int) LimelightHelpers.getFiducialID("limelight-two");
 
         if(TagID == -1 && TagID2 == -1){
             return tag = false;
@@ -43,12 +43,12 @@ public class limelight extends SubsystemBase{
         return false;
     }
 
-    public Pose2d getRobotPose(){
-        return LimelightHelpers.getBotPose2d_wpiBlue("");
+    public Pose3d getRobotPose(){
+        return LimelightHelpers.getBotPose3d_wpiBlue("");
     }
 
-    public Pose2d getRobotPose_two(){
-        return LimelightHelpers.getBotPose2d("two");
+    public Pose3d getRobotPose_two(){
+        return LimelightHelpers.getBotPose3d_wpiBlue("limelight-two");
     }
 
     public Pose3d robotToTarget(){
@@ -59,36 +59,39 @@ public class limelight extends SubsystemBase{
         return LimelightHelpers.getBotPose2d("").getRotation().getDegrees();
     }    
 
+    public Pose2d getLLPose(){
+        if(TagID == -1 && TagID2 != -1){
+            return avgPose = getRobotPose_two().toPose2d();
+        }
+        else if(TagID2 == -1 && TagID != -1){
+            return avgPose = getRobotPose().toPose2d();
+        }
+        else if (TagID != -1 && TagID2 != -1){
+            return avgPose = new Pose2d( (getRobotPose().toPose2d().getX() + getRobotPose_two().toPose2d().getX()) / 2,
+                                         (getRobotPose().toPose2d().getY() + getRobotPose_two().toPose2d().getY()) / 2,
+                                         getRobotPose().toPose2d().getRotation().plus(getRobotPose_two().toPose2d().getRotation()).div(2)
+                                       );
+        }
+        else{
+            return new Pose2d();
+        }
+    }
+
     @Override
     public void periodic(){
-        if(tag = true){
             getTag();
             getRobotPose();
             getRobotPose_two();
             robotToTarget();
             deltaRobotHeadingDeg();
-        }
+            getLLPose();
 
-        // if(TagID == -1 && TagID2 != -1){
-        //     avgPose = getRobotPose_two();
-        // }
-        // else if(TagID2 == -1 && TagID != -1){
-        //     avgPose = getRobotPose();
-        // }
-        // else if (TagID != -1 && TagID2 != -1){
-        //     avgPose = new Pose2d(
-        //                           (getRobotPose().getX() + getRobotPose_two().getX()) / 2,
-        //                           (getRobotPose().getY() + getRobotPose_two().getY()) / 2,
-        //                            getRobotPose().getRotation().plus(getRobotPose_two().getRotation()).div(2)
-        //     );
-        // }
-        // else {
-        //     avgPose = new Pose2d();
-        // }
-
-        avgPose = getRobotPose();
         LL_Pose.setRobotPose(avgPose);
+        // LL_Pose.setRobotPose(getRobotPose_two().toPose2d());
         SmartDashboard.putData("LL_Pose", LL_Pose);
+        SmartDashboard.putNumber("LX", LimelightHelpers.getTX("limelight-two"));
+        SmartDashboard.putNumber("LY", LimelightHelpers.getTY("limelight-two"));
+        SmartDashboard.putNumber("LR", getRobotPose_two().getRotation().getAngle());
         // SmartDashboard.putNumber("RY", LimelightHelpers.getTargetPose3d_CameraSpace("").getRotation().getY() * 57.3);
         SmartDashboard.putBoolean("getTag", tag);
    }

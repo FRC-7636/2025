@@ -21,7 +21,8 @@ public class test extends Command {
         PoseEstimate Bot = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
         Pose2d BotPose = Bot.pose;
 
-        swerve.resetOdometry(BotPose);
+        // swerve.resetOdometry(BotPose);
+        swerve.resetOdometry(new Pose2d(1.901, 4.031, Rotation2d.fromDegrees(0)));
         // swerve.driveToPose(new Pose2d(3.715, 5.351, Rotation2d.fromDegrees(0)))  //19
         swerve.driveToPose(new Pose2d(2.901, 4.031, Rotation2d.fromDegrees(0)))  //18
               .andThen( () -> swerve.getSwerveDrive().lockPose());

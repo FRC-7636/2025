@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.zip.CRC32C;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.AbsoluteEncoder;
@@ -14,6 +16,7 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,9 +25,9 @@ import frc.robot.Constants.AlgaeConstants;
 
 // 2 Karken Motor - for 
 public class Algae extends SubsystemBase {
-    private final SparkMax Algae_Ctrl = new SparkMax(AlgaeConstants.Algae_Ctrl_ID, MotorType.kBrushless); 
+    private final TalonFX Algae_Ctrl = new TalonFX(AlgaeConstants.Algae_Ctrl_ID, "CC2"); 
     // private final TalonFX Algae_Ctrl = new TalonFX(AlgaeConstants.Algae_Ctrl_ID, "cantivore");
-    private final TalonFX Algae_Roller = new TalonFX(AlgaeConstants.Algae_Roller_ID, "rio");
+    private final TalonFX Algae_Roller = new TalonFX(AlgaeConstants.Algae_Roller_ID, "CC2");
 
     private final SparkMaxConfig Intake_Ctrl_Config; //
     private final AbsoluteEncoder Intake_Ctrl_Encoder = new AbsoluteEncoder(){
@@ -37,7 +40,7 @@ public class Algae extends SubsystemBase {
         }
     };
 
-    private final SparkClosedLoopController Intake_Ctrl_PID = Algae_Ctrl.getClosedLoopController();
+    // private final SparkClosedLoopController Intake_Ctrl_PID = Algae_Ctrl.getClosedLoopController();
         
     public Algae(){
         Intake_Ctrl_Config = new SparkMaxConfig(); //
@@ -82,10 +85,10 @@ public class Algae extends SubsystemBase {
    }
 
     public void Intake_back(){
-        Intake_Ctrl_PID.setReference(getShortest() * 2 * Math.PI, ControlType.kPosition, ClosedLoopSlot.kSlot1);
-
-        Timer.delay(2);
-        Algae_Ctrl.set(0);
+        // Intake_Ctrl_PID.setReference(getShortest() * 2 * Math.PI, ControlType.kPosition, ClosedLoopSlot.kSlot1);
+        Algae_Ctrl.set(-0.15);
+        // Timer.delay(2);
+        // Algae_Ctrl.set(0);
     }
 
     public void Intake_hold(){
@@ -101,21 +104,20 @@ public class Algae extends SubsystemBase {
     }
 
     public void suck(){
-        Algae_Roller.set(-0.3);
+        Algae_Roller.set(0.3);
     }
 
     public void shoot(){
-        Algae_Roller.set(0.2);
+        Algae_Roller.set(-0.35);
     }
 
     public void Stop(){
         Algae_Ctrl.set(0);
-        // Algae_Roller.set(0);
+        Algae_Roller.set(0);
     }
 
     @Override 
     public void periodic(){
-        getPosition();
         SmartDashboard.putNumber("Al_Pos", getPosition());
     }
 }

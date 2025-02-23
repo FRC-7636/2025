@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.PoseEstimate;
+import frc.robot.subsystems.limelight;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 
 import java.io.File;
@@ -89,6 +90,7 @@ public class SwerveSubsystem extends SubsystemBase{
    * PhotonVision class to keep an accurate odometry.
    */
   private Vision vision;
+  private limelight limelight;
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -98,12 +100,12 @@ public class SwerveSubsystem extends SubsystemBase{
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
     //  In this case the gear ratio is 12.8 motor revolutions per wheel rotation.
     //  The encoder resolution per motor revolution is 1 per motor revolution.
-    double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(21.4285714286);
+    double angleConversionFactor = SwerveMath.calculateDegreesPerSteeringRotation(18.75);
     // Motor conversion factor is (PI * WHEEL DIAMETER IN METERS) / (GEAR RATIO * ENCODER RESOLUTION).
     //  In this case the wheel diameter is 4 inches, which must be converted to meters to get meters/second.
     //  The gear ratio is 6.75 motor revolutions per wheel rotation.
     //  The encoder resolution per motor revolution is 1 per motor revolution.
-    double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4), 6.12);
+    double driveConversionFactor = SwerveMath.calculateMetersPerRotation(Units.inchesToMeters(4),5.36);
     System.out.println("\"conversionFactors\": {");
     System.out.println("\t\"angle\": {\"factor\": " + angleConversionFactor + " },");
     System.out.println("\t\"drive\": {\"factor\": " + driveConversionFactor + " }");
@@ -141,9 +143,11 @@ public class SwerveSubsystem extends SubsystemBase{
     }
     resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(getPose().getRotation().getDegrees())));
     // resetOdometry(new Pose2d(2.175, 5.351, Rotation2d.fromDegrees(0)));
-
+    // new Pose2d(1.642, 3.348, Rotation2d.fromDegrees(0));
+    // resetOdometry(new Pose2d(1.642, 4.031, Rotation2d.fromDegrees(0)));
+    // resetOdometry(new Pose2d(1.901, 4.031, Rotation2d.fromDegrees(0)));
+    
     setupPathPlanner();
-
     }
 
   /**
@@ -229,6 +233,12 @@ public class SwerveSubsystem extends SubsystemBase{
   public void setupPhotonVision(){
     // vision = new Vision();
   }
+
+  public void setPOS(){
+    // resetOdometry(new Pose2d(0,0, Rotation2d.fromDegrees(0)));
+    // resetOdometry(new Pose2d(0.901, 4.031, Rotation2d.fromDegrees(0)));
+      resetOdometry(LimelightHelpers.getBotPose2d_wpiBlue("limelight-two"));
+  }
   
   @Override
   public void periodic(){
@@ -249,34 +259,41 @@ public class SwerveSubsystem extends SubsystemBase{
     SmartDashboard.putNumber("Y", getPose().getY());
     SmartDashboard.putNumber("Rotation", getPose().getRotation().getDegrees());
 
-    BotPose1 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
-    BotPose2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+    // BotPose1 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+    BotPose2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-two");
     
     if(BotPose2 == null){
-      // Pose2d botPose = BotPose1.pose;
-      // SmartDashboard.putNumber("llX", botPose.getX());
-      // SmartDashboard.putNumber("llY", botPose.getY());
-    }
-    else if(BotPose1 == null){
-      Pose2d botPose = BotPose2.pose;
+      Pose2d botPose = BotPose1.pose;
       SmartDashboard.putNumber("llX", botPose.getX());
       SmartDashboard.putNumber("llY", botPose.getY());
+      SmartDashboard.putNumber("Rota", (botPose.getRotation().getDegrees()));
     }
-    else{
-      Pose2d avgPos = new Pose2d(
-                                (BotPose1.pose.getX() + BotPose2.pose.getX()) / 2,
-                                (BotPose1.pose.getY() + BotPose2.pose.getY()) / 2,
-                                 BotPose1.pose.getRotation().plus(BotPose2.pose.getRotation()).div(2)
-);
-      SmartDashboard.putNumber("llX", (BotPose1.pose.getX() + BotPose2.pose.getX()) / 2);
-      SmartDashboard.putNumber("llY", (BotPose1.pose.getY() + BotPose2.pose.getY()) / 2);
-      SmartDashboard.putNumber("Rota", (BotPose1.pose.getRotation().getDegrees() + BotPose2.pose.getRotation().getDegrees() / 2));
-    }
+    // else if(BotPose1 == null){
+    //   Pose2d botPose = BotPose2.pose;
+    //   SmartDashboard.putNumber("llX", botPose.getX());
+    //   SmartDashboard.putNumber("llY", botPose.getY());
+    //   SmartDashboard.putNumber("Rota", (botPose.getRotation().getDegrees()));
+
+    // }
+//     else{
+//       Pose2d avgPos = new Pose2d(
+//                                 (BotPose1.pose.getX() + BotPose2.pose.getX()) / 2,
+//                                 (BotPose1.pose.getY() + BotPose2.pose.getY()) / 2,
+//                                  BotPose1.pose.getRotation().plus(BotPose2.pose.getRotation()).div(2)
+// );
+//       SmartDashboard.putNumber("llX", (BotPose1.pose.getX() + BotPose2.pose.getX()) / 2);
+//       SmartDashboard.putNumber("llY", (BotPose1.pose.getY() + BotPose2.pose.getY()) / 2);
+//       SmartDashboard.putNumber("Rota", (BotPose1.pose.getRotation().getDegrees() + BotPose2.pose.getRotation().getDegrees() / 2));
+//     }
 
     SmartDashboard.putNumber("heading", getHeading().getDegrees());
 
     SmartDashboard.putData("drive", drive);
     SmartDashboard.putData("turn", turn);
+
+    SmartDashboard.putNumber("XPOS", getPose().getX());
+    SmartDashboard.putNumber("YPOS", getPose().getY());
+    SmartDashboard.putNumber("ROTAPOS", getPose().getRotation().getDegrees());
   }
 
   @Override
@@ -305,24 +322,22 @@ public class SwerveSubsystem extends SubsystemBase{
           this::getRobotVelocity,
           // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
           (speedsRobotRelative, moduleFeedForwards) -> {
-            if (enableFeedforward)
-            {
+            if (enableFeedforward){
               swerveDrive.drive(
                                 speedsRobotRelative,
                                 swerveDrive.kinematics.toSwerveModuleStates(speedsRobotRelative),
                                 moduleFeedForwards.linearForces()
                                );
-            } else
-            {
+            } else{
               swerveDrive.setChassisSpeeds(speedsRobotRelative);
             }
           },
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
           // PPHolonomicController is% the built in path following controller for holonomic drive trains
-          new PIDConstants(4, 0, 0.1, 0),
+          new PIDConstants(5.8, 5, 0.05, 20),
           // Translation PID constants
-          new PIDConstants(5, 0, 0, 0)
+          new PIDConstants(4, 0, 0, 0)
           // Rotation PID constants
           ),
           config,

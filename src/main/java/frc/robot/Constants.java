@@ -13,7 +13,6 @@ import swervelib.math.Matter;
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean constants. This
  * class should not be used for any other purpose. All constants should be declared globally (i.e. public static). Do
  * not put anything functional in this class.
- *
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
@@ -86,35 +85,38 @@ public final class Constants{
 
     public static class ArmConstants{
         // Arm ID
-        public static final int Arm_Coral_ID = 31;
-        public static final int Arm_ID = 32;
+        public static final int Arm_ID = 31;
+        public static final int Arm_Coral_ID = 32;
         
-        public static final int Arm_Coral_Encoder = 33;
-        public static final int Arm_Encoder_ID = 34;
+        public static final int Arm_Encoder_ID = 60;
+        public static final int Arm_Coral_Encoder = 34;
+
         // Arm Config 
         public static final boolean Arm_Coral_Inverted = false;
         public static final boolean Arm_Inverted = false;
 
         public static final double Arm_StartUp = 0;
         public static final double Arm_Station = 0;
-        public static final double Arm_RL1 = 0;
-        public static final double Arm_RL2 = 0;
-        public static final double Arm_RL3 = 0;
+        public static final double Arm_RL1 = -0.45;
+        public static final double Arm_RL2 = -0.45;
+        public static final double Arm_RL3 = -0.45;
         public static final double Arm_RL4 = 0;
 
         public static final double Arm_Coral_StartUp = 0;
         public static final double Arm_Coral_Station = 0;
-        public static final double Arm_Coral_RL1 = 0;
-        public static final double Arm_Coral_RL2 = 0;
-        public static final double Arm_Coral_RL3 = 0;
+        public static final double Arm_Coral_RL1 = 0.04;
+        public static final double Arm_Coral_RL2 = 0.1;
+        public static final double Arm_Coral_RL3 = 0.1;
         public static final double Arm_Coral_RL4 = 0;
+
+        public static final double MAX_ACCEL = 500;
+        public static final double MAX_VELOCITY = 200;
         
         // Arm PIDF
-        public static final double Arm_P = 0;
+        public static final double Arm_P = 0.1;
         public static final double Arm_I = 0;
         public static final double Arm_D = 0;
         public static final double Arm_F = 0;        
-
         
         // Arm Coral PIDF
         public static final double Arm_Coral_P = 0;
@@ -126,10 +128,10 @@ public final class Constants{
     // Climber Constants
     public static class ClimberConstants {
         // Climber ID
-        public static final int Left_Motor_ID = 31;
-        public static final int RightMotor_ID = 32;
+        public static final int LeftMotor_ID = 42;
+        public static final int RightMotor_ID = 41;
 
-        public static final int Encoder_ID = 33;
+        public static final int Encoder_ID = 42;
         
         // Climber Config
         public static final boolean LeftMotor_Inverted = false;
@@ -149,25 +151,25 @@ public final class Constants{
         public static final int LeftMotor_ID = 41;
         public static final int RightMotor_ID = 42;
 
-        public static final int Encoder_ID = 43;
+        public static final int Encoder_ID = 0;
 
         // Elevator Config
-        public static final boolean LeftMotor_Inverted = false;
+        public static final boolean LeftMotor_Inverted = true;
         public static final boolean RightMotor_Inverted = false;
 
         public static final double floor = 0;
         public static final double L1 = 0;
-        public static final double L2 = 0;
-        public static final double L3 = 0;
+        public static final double L2 = -31;
+        public static final double L3 = 4500;
         public static final double L4 = 0;
 
-        public static final double MAX_ACCEL = 0;
-        public static final double MAX_VELOCITY = 0;
+        public static final double MAX_ACCEL = 1000;
+        public static final double MAX_VELOCITY = 400;
 
         // Elevator PIDF
-        public static final double P = 0;
+        public static final double P = 0.5;
         public static final double I = 0;
-        public static final double D = 0;
+        public static final double D = 0.01;
         public static final double F = 0;
     }
 
@@ -177,13 +179,16 @@ public final class Constants{
         public static final int Arm_Left_Motor = 52;
         public static final int Arm_Right_Motor = 53;
 
-        public static final int Coral_Encoder_ID = 56;
-        public static final int Arm_Encder = 57;
+        public static final int Coral_Sensor_ID = 23;
 
         // Coral Config
         public static final boolean Coral_Inverted = false;
         public static final boolean Arm_Left_Inverted = false;
         public static final boolean Arm_Right_Inverted = false;
+
+        public static final double MAX_ACCEL = 500;
+        public static final double MAX_VELOCITY = 200;
+
         // Intake
         public static final double Coral_Open = 0;
         public static final double Coral_Close = 0;

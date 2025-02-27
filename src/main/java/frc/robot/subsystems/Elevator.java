@@ -8,7 +8,6 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.spark.config.EncoderConfig;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -84,6 +83,11 @@ public class Elevator extends SubsystemBase{
         return Right_Motor.getPosition().getValueAsDouble();
         // return Encoder.getAbsolutePosition().getValueAsDouble();
     }
+    public double getLEFTAbsolutePosition(){
+        // return rotation * 360 + Encoder.getAbsolutePosition().getValueAsDouble();
+        return Left_Motor.getPosition().getValueAsDouble();
+        // return Encoder.getAbsolutePosition().getValueAsDouble();
+    }
 
     public void ELE_Floor(){
         Left_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.floor));
@@ -97,7 +101,7 @@ public class Elevator extends SubsystemBase{
 
     public void ELE_RL2(){
         Left_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L2));
-        Right_Motor.setControl(new MotionMagicDutyCycle(30));
+        Right_Motor.setControl(new MotionMagicDutyCycle(ElevatorConstants.L2));
     }
 
     public void ELE_RL3(){
@@ -135,7 +139,10 @@ public class Elevator extends SubsystemBase{
         // }
         // LastPos = (Encoder.getAbsolutePosition().getValueAsDouble()) ;
         // SmartDashboard.putNumber("Eleva_pos", (currentPos + rotation));
+        getAbsolutePosition();
+        getLEFTAbsolutePosition();
         SmartDashboard.putNumber("Eleva_pos", getAbsolutePosition());
+        SmartDashboard.putNumber("Eleva_pos_L", getLEFTAbsolutePosition());
 
     }
 }

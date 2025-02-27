@@ -1,4 +1,4 @@
-package frc.robot.commands.Auto;
+package frc.robot.commands.Auto_Cmd;
 
 import java.io.IOException;
 
@@ -21,25 +21,25 @@ public class DriveToReef18 extends SequentialCommandGroup{
 
     
     public DriveToReef18(SwerveSubsystem swerve, limelight limelight){
-        // boolean auto = false;
-        // PathPlannerPath path = null;
-        // try {
-        //     path = PathPlannerPath.fromPathFile("New New Path");
+        boolean auto = false;
+        PathPlannerPath path = null;
+        try {
+            path = PathPlannerPath.fromPathFile("DriveToReef18_2");
 
-        //     // swerve.getSwerveDrive().resetOdometry(new Pose2d(0.901, 4.031, Rotation2d.fromDegrees(0)));
-        //     swerve.getSwerveDrive().resetOdometry(LimelightHelpers.getBotPose2d_wpiBlue("limelight-two"));
+            // swerve.getSwerveDrive().resetOdometry(new Pose2d(0.901, 4.031, Rotation2d.fromDegrees(0)));
+            swerve.getSwerveDrive().resetOdometry(LimelightHelpers.getBotPose2d_wpiBlue("limelight-two"));
 
-        // } catch (FileVersionException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
-        // } catch (IOException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
+        } catch (FileVersionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
 
-        // } catch (ParseException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
-        // }
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         Pose2d LLrobot_1 = LimelightHelpers.getBotPose2d_wpiBlue("");
         Pose2d LLrobot_2 = LimelightHelpers.getBotPose2d_wpiBlue("limelight-two");

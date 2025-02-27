@@ -1,4 +1,4 @@
-package frc.robot.commands.Auto;
+package frc.robot.commands.Auto_Cmd;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ public class AutoDrive extends Command{
         this.swerve = swerve;
         addRequirements(this.swerve);
         try {
-            path = PathPlannerPath.fromPathFile("New New Path");
+            path = PathPlannerPath.fromPathFile("DriveToReef18_2");
             swerve.getSwerveDrive().resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
         } catch (FileVersionException e) {
             // TODO Auto-generated catch block

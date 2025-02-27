@@ -69,11 +69,11 @@ public class Coral extends SubsystemBase{
 
     // Coral Intake
     public void Coral_Suck(){
-        Coral_Motor.set(0.3);
+        Coral_Motor.set(-0.3);
     }
 
     public void Coral_Shoot(){
-        Coral_Motor.set(-0.3);
+        Coral_Motor.set(0.3);
     }
 
     public void Coral_Stop(){

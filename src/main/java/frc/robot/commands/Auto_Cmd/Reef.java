@@ -1,4 +1,4 @@
-package frc.robot.commands.Auto;
+package frc.robot.commands.Auto_Cmd;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;

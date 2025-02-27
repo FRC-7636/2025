@@ -97,9 +97,9 @@ public final class Constants{
 
         public static final double Arm_StartUp = 0;
         public static final double Arm_Station = 0;
-        public static final double Arm_RL1 = -0.45;
-        public static final double Arm_RL2 = -0.45;
-        public static final double Arm_RL3 = -0.45;
+        public static final double Arm_RL1 = 40;
+        public static final double Arm_RL2 = 40;
+        public static final double Arm_RL3 = 40;
         public static final double Arm_RL4 = 0;
 
         public static final double Arm_Coral_StartUp = 0;
@@ -159,9 +159,9 @@ public final class Constants{
 
         public static final double floor = 0;
         public static final double L1 = 0;
-        public static final double L2 = -31;
-        public static final double L3 = 4500;
-        public static final double L4 = 0;
+        public static final double L2 = 24;
+        public static final double L3 = 31;
+        public static final double L4 = 61;
 
         public static final double MAX_ACCEL = 1000;
         public static final double MAX_VELOCITY = 400;

@@ -1,4 +1,4 @@
-package frc.robot.commands.Auto;
+package frc.robot.commands.Auto_Cmd;
 
 import java.io.IOException;
 import org.json.simple.parser.ParseException;

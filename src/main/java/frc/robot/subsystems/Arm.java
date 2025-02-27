@@ -106,12 +106,12 @@ public class Arm extends SubsystemBase{
 
     public void Arm_DOWN(){
         Arm_Motor.set(-0.2);
-        Arm_Coral_Motor.set(-0.3);
+        // Arm_Coral_Motor.set(-0.3);
     }
 
     public void Arm_UP(){
         Arm_Motor.set(0.2);
-        Arm_Coral_Motor.set(0.3);
+        // Arm_Coral_Motor.set(0.3);
     }
 
     public void Stop(){
@@ -162,11 +162,15 @@ public class Arm extends SubsystemBase{
     // public void Arm_Coral_DOWN(){
     //     Arm_Motor.set(0.3);
     // }
+
+    public void Arm_Stop(){
+        Arm_Motor.set(0);
+    }
     @Override
     public void periodic(){
         getArmPos();
         getArmCoralPos();
         SmartDashboard.putNumber("Arm_Pos", getArmPos());
-        SmartDashboard.putNumber("Arm_Coral_Pos", getArmCoralPos());
+        SmartDashboard.putNumber("Arm_Coral_Pose", getArmCoralPos());
     }
 }

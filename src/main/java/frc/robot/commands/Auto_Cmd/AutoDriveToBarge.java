@@ -1,4 +1,4 @@
-package frc.robot.commands.Auto;
+package frc.robot.commands.Auto_Cmd;
 
 import java.io.IOException;
 
@@ -14,12 +14,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.LimelightHelpers;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.limelight;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class AutoDriveToBarge extends SequentialCommandGroup {
 
-    public AutoDriveToBarge(SwerveSubsystem swerve, limelight limelight){
+    public AutoDriveToBarge(SwerveSubsystem swerve, limelight limelight, Elevator elevator){
         // Pose2d BotPose = LimelightHelpers.getBotPose2d_wpiBlue("");
 
         // Rotation2d tagRotation2d = new Rotation2d(Math.toRadians(90));
@@ -35,7 +36,7 @@ public class AutoDriveToBarge extends SequentialCommandGroup {
         PathPlannerPath path = null;
         try {
             // path = PathPlannerPath.fromPathFile("one_meter");
-            path = PathPlannerPath.fromPathFile("New New Path");
+            path = PathPlannerPath.fromPathFile("DriveToReef18_2");
 
             // swerve.getSwerveDrive().resetOdometry(new Pose2d(0.901, 4.031, Rotation2d.fromDegrees(0)));
             swerve.getSwerveDrive().resetOdometry(LimelightHelpers.getBotPose2d_wpiBlue("limelight-two"));
@@ -54,7 +55,7 @@ public class AutoDriveToBarge extends SequentialCommandGroup {
         Pose2d LLrobot = LimelightHelpers.getBotPose2d_wpiBlue("limelight-two");
         // Pose2d robot = limelight.getRobotPose_two().toPose2d();
         // if(RobotPose.getX() != 0){
-            addRequirements(swerve);
+            addRequirements(swerve, elevator);
             // addCommands(Commands.runOnce(() -> swerve.resetOdometry(new Pose2d(1.642, 4.031, Rotation2d.fromDegrees(0)))));
             // addCommands(Commands.runOnce(() -> swerve.resetOdometry(swerve.getPose())));
             // swerve.getSwerveDrive().resetOdometry(new Pose2d(0.901, 4.031, Rotation2d.fromDegrees(0)));
@@ -67,8 +68,9 @@ public class AutoDriveToBarge extends SequentialCommandGroup {
                         );
             addCommands(new WaitCommand(0.5));
             addCommands(Commands.runOnce( () -> swerve.driveToPose(new Pose2d(2.901, 4.031, Rotation2d.fromDegrees(0))), swerve));
-            // addCommands(AutoBuilder.followPath(path));
-
+            addCommands(AutoBuilder.followPath(path));
+            addCommands(Commands.runOnce(() -> elevator.ELE_RL2(), elevator));
+            addCommands(new WaitCommand(0.5));
             // addCommands(Commands.runOnce( () -> swerve.resetOdometry(new Pose2d(1.642, 4.031, Rotation2d.fromDegrees(0)))));
             // addCommands( swerve.driveToPose(new Pose2d(3.051, 4.251, Rotation2d.fromDegrees(0))));
         // }

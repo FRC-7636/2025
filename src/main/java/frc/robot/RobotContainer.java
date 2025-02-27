@@ -20,16 +20,15 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-
-import frc.robot.commands.Auto.AutoPath;
-import frc.robot.commands.Auto.AutoDrive;
-import frc.robot.commands.Auto.AutoDriveToBarge;
-import frc.robot.commands.Auto.AutoToReef;
-import frc.robot.commands.Auto.DriveToCoralStation;
-import frc.robot.commands.Auto.DriveToReef18;
-import frc.robot.commands.Auto.REEF2;
-import frc.robot.commands.Auto.Reef;
-import frc.robot.commands.Auto.test;
+import frc.robot.commands.Auto_Cmd.AutoDrive;
+import frc.robot.commands.Auto_Cmd.AutoDriveToBarge;
+import frc.robot.commands.Auto_Cmd.AutoPath;
+import frc.robot.commands.Auto_Cmd.AutoToReef;
+import frc.robot.commands.Auto_Cmd.DriveToCoralStation;
+import frc.robot.commands.Auto_Cmd.DriveToReef18;
+import frc.robot.commands.Auto_Cmd.REEF2;
+import frc.robot.commands.Auto_Cmd.Reef;
+import frc.robot.commands.Auto_Cmd.test;
 import frc.robot.commands.Group_Cmd.Coral_Station;
 import frc.robot.commands.Group_Cmd.RL1;
 import frc.robot.commands.Group_Cmd.RL2;
@@ -46,6 +45,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.limelight;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.swervedrive.Vision;
+import frc.robot.subsystems.Candle;
 
 import java.io.File;
 import java.util.function.Supplier;
@@ -81,6 +81,7 @@ public class RobotContainer{
   private final Coral coral = new Coral();
   private final Elevator elevator = new Elevator();
   private final limelight limelight = new limelight();
+  private final Candle candle = new Candle();
 
   // Single CMD
   private final Algae_Intake CMD_Algae_Intake = new Algae_Intake(algae);
@@ -95,7 +96,7 @@ public class RobotContainer{
 
   // Auto CMD
   private final AutoDrive CMD_AutoDrive = new AutoDrive(drivebase);
-  private final AutoDriveToBarge CMD_AutoDriveToBarge = new AutoDriveToBarge(drivebase, limelight);
+  private final AutoDriveToBarge CMD_AutoDriveToBarge = new AutoDriveToBarge(drivebase, limelight, elevator);
   private final AutoPath CMD_AutoPath = new AutoPath(drivebase, drivebase.getSwerveDrive());
   private final AutoToReef CMD_AutoToReef = new AutoToReef(drivebase);
   private final DriveToCoralStation CMD_DriveToCoralStation = new DriveToCoralStation(drivebase, limelight);
@@ -154,15 +155,16 @@ public class RobotContainer{
                                                                                               .headingWhile(true);
 
   Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
-                                                                        Drive_Ctrl.getLeftY() * -1,
-                                                                        Drive_Ctrl.getLeftX() * -1, 
-                                                                        Drive_Ctrl.getRightX() * -5
+                                                                        Drive_Ctrl.getLeftY() * -3,
+
+                                                                        Drive_Ctrl.getLeftX() * -3, 
+                                                                        Drive_Ctrl.getRightX() * 10
                                                                         );
 
   // Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
-  //                                                                       test.getLeftY() * 0,
-  //                                                                       test.getLeftX() * 0, 
-  //                                                                       test.getRightX() * 0
+  //                                                                       Drive_Ctrl.getLeftY() * 0,
+  //                                                                       Drive_Ctrl.getLeftX() * 0, 
+  //                                                                       Drive_Ctrl.getRightX() * 0
   //                                                                       );
 
   // Applies deadbands and inverts controls because joysticks are back-right positive while robot controls are front-left positive
@@ -224,27 +226,34 @@ public class RobotContainer{
    * Flight joysticks}.
    */
   private void configureBindings(){
-    new JoystickButton(Drive_Ctrl, 2).onTrue(CMD_AutoPath);
-    new JoystickButton(Drive_Ctrl, 1).onTrue(CMD_AutoDriveToBarge);
-    new JoystickButton(Drive_Ctrl, 3).onTrue(CMD_AutoToReef);
-    new JoystickButton(Drive_Ctrl, 4).onTrue(CMD_AutoDrive);
-    new JoystickButton(Drive_Ctrl, 5).onTrue(CMD_DriveToReef18);
-    new JoystickButton(Drive_Ctrl, 6).onTrue(new InstantCommand(drivebase::setPOS));
+    // new JoystickButton(Drive_Ctrl, 2).onTrue(CMD_AutoPath);
+    // new JoystickButton(Drive_Ctrl, 1).onTrue(CMD_AutoDriveToBarge);
+    // new JoystickButton(Drive_Ctrl, 3).onTrue(CMD_AutoToReef);
+    // new JoystickButton(Drive_Ctrl, 4).onTrue(CMD_AutoDrive);
+    // new JoystickButton(Drive_Ctrl, 5).onTrue(CMD_DriveToReef18);
+    // new JoystickButton(Drive_Ctrl, 6).onTrue(new InstantCommand(drivebase::setPOS));
+
+    new JoystickButton(Drive_Ctrl, 1).onTrue(new InstantCommand(algae::Intake_out).alongWith(new WaitCommand(0.5).andThen(new InstantCommand(algae::Stop))));
+    new JoystickButton(Drive_Ctrl, 2).onTrue(new InstantCommand(algae::Intake_back).alongWith(new WaitCommand(0.5).andThen(new InstantCommand(algae::Stop))));
+    new JoystickButton(Drive_Ctrl, 3).whileTrue(new InstantCommand(algae::suck)).onFalse(new InstantCommand(algae::Stop));
+    new JoystickButton(Drive_Ctrl, 4).whileTrue(new InstantCommand(algae::shoot)).onFalse(new InstantCommand(algae::Stop));
 
     // Algae
-    new JoystickButton(Ctrl, 1).onTrue(CMD_Algae_Intake);
-    new JoystickButton(Ctrl, 2).onTrue(CMD_Algae_Release);
+    new JoystickButton(Ctrl, 1).whileTrue(new InstantCommand(arm::Arm_DOWN)).onFalse(new InstantCommand(arm::Arm_Stop));
+    new JoystickButton(Ctrl, 2).whileTrue(new InstantCommand(arm::Arm_UP)).onFalse(new InstantCommand(arm::Arm_Stop));
 
     // Reef
-    new JoystickButton(Ctrl, 3).onTrue(CMD_RL1);
-    new JoystickButton(Ctrl, 4).onTrue(CMD_RL2);
-    new JoystickButton(Ctrl, 5).onTrue(CMD_RL3);
-
+    // new JoystickButton(Ctrl, 3).onTrue(CMD_RL1);
+    // new JoystickButton(Ctrl, 4).onTrue(CMD_RL2);
+    // new JoystickButton(Ctrl, 5).onTrue(CMD_RL3);
+    new JoystickButton(Ctrl, 3).onTrue(new InstantCommand(elevator::ELE_RL2));
+    new JoystickButton(Ctrl, 4).onTrue(new InstantCommand(elevator::ELE_RL3));
+    new JoystickButton(Ctrl, 5).onTrue(new InstantCommand(coral::Coral_Suck)).onFalse(new InstantCommand(coral::Coral_Stop));
     // Coral 
-    new JoystickButton(Ctrl, 6).onTrue(CMD_Coral_Station);
+    new JoystickButton(Ctrl, 6).whileTrue(new InstantCommand(coral::Coral_Shoot)).onFalse(new InstantCommand(coral::Coral_Stop));
 
-    new JoystickButton(Ctrl, 7).onTrue(CMD_DriveToReef18);
-    new JoystickButton(Ctrl, 8).onTrue(CMD_DriveToCoralStation);
+    new JoystickButton(Ctrl, 7).whileTrue(new InstantCommand(elevator::ELE_Down)).onFalse(new InstantCommand(elevator::ELE_Stop));
+    new JoystickButton(Ctrl, 8).whileTrue(new InstantCommand(elevator::ELE_Up)).onFalse(new InstantCommand(elevator::ELE_Stop));
 
 
     // new JoystickButton(test, 2).onTrue(new InstantCommand(algae::Intake_back).alongWith(new WaitCommand(0.5).andThen(new InstantCommand(algae::Stop))));

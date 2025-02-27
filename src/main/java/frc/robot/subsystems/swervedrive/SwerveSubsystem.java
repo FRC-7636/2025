@@ -83,8 +83,8 @@ public class SwerveSubsystem extends SubsystemBase{
    */
   private final boolean visionDriveTest = true;
  
-  private PIDController drive = new PIDController(0, 0, 0);
-  private PIDController turn = new PIDController(0, 0, 0)
+  // private PIDController drive = new PIDController(0, 0, 0);
+  // private PIDController turn = new PIDController(0, 0, 0)
   ;
   /**
    * PhotonVision class to keep an accurate odometry.
@@ -252,44 +252,45 @@ public class SwerveSubsystem extends SubsystemBase{
       LimelightHelpers.getOrientation(swerveDrive);
     }
 
-    getPose();
-    Bot_Pose.setRobotPose(getPose());
-    SmartDashboard.putData("Bot_Pose", Bot_Pose);
-    SmartDashboard.putNumber("X", getPose().getX());
-    SmartDashboard.putNumber("Y", getPose().getY());
-    SmartDashboard.putNumber("Rotation", getPose().getRotation().getDegrees());
+    // getPose();
+    // Bot_Pose.setRobotPose(getPose());
+    // SmartDashboard.putData("Bot_Pose", Bot_Pose);
+    // SmartDashboard.putNumber("X", getPose().getX());
+    // SmartDashboard.putNumber("Y", getPose().getY());
+    // SmartDashboard.putNumber("Rotation", getPose().getRotation().getDegrees());
 
-    // BotPose1 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+    BotPose1 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
     BotPose2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-two");
-    
-    if(BotPose2 == null){
-      Pose2d botPose = BotPose1.pose;
-      SmartDashboard.putNumber("llX", botPose.getX());
-      SmartDashboard.putNumber("llY", botPose.getY());
-      SmartDashboard.putNumber("Rota", (botPose.getRotation().getDegrees()));
+    if(BotPose2 == null && BotPose1 != null){
+        Pose2d botPose = BotPose1.pose;
+        SmartDashboard.putNumber("llX", botPose.getX());
+        SmartDashboard.putNumber("llY", botPose.getY());
+        SmartDashboard.putNumber("Rota", (botPose.getRotation().getDegrees()));
+        Bot_Pose.setRobotPose(botPose);
     }
-    // else if(BotPose1 == null){
-    //   Pose2d botPose = BotPose2.pose;
-    //   SmartDashboard.putNumber("llX", botPose.getX());
-    //   SmartDashboard.putNumber("llY", botPose.getY());
-    //   SmartDashboard.putNumber("Rota", (botPose.getRotation().getDegrees()));
-
-    // }
-//     else{
-//       Pose2d avgPos = new Pose2d(
-//                                 (BotPose1.pose.getX() + BotPose2.pose.getX()) / 2,
-//                                 (BotPose1.pose.getY() + BotPose2.pose.getY()) / 2,
-//                                  BotPose1.pose.getRotation().plus(BotPose2.pose.getRotation()).div(2)
-// );
-//       SmartDashboard.putNumber("llX", (BotPose1.pose.getX() + BotPose2.pose.getX()) / 2);
-//       SmartDashboard.putNumber("llY", (BotPose1.pose.getY() + BotPose2.pose.getY()) / 2);
-//       SmartDashboard.putNumber("Rota", (BotPose1.pose.getRotation().getDegrees() + BotPose2.pose.getRotation().getDegrees() / 2));
-//     }
+    else if(BotPose1 == null && BotPose2 != null){
+        Pose2d botPose = BotPose2.pose;
+        SmartDashboard.putNumber("llX", botPose.getX());
+        SmartDashboard.putNumber("llY", botPose.getY());
+        SmartDashboard.putNumber("Rota", (botPose.getRotation().getDegrees()));
+        Bot_Pose.setRobotPose(botPose);
+    }
+    else if(BotPose1 != null && BotPose2 != null){
+        Pose2d avgPos = new Pose2d(
+                                  (BotPose1.pose.getX() + BotPose2.pose.getX()) / 2,
+                                  (BotPose1.pose.getY() + BotPose2.pose.getY()) / 2,
+                                   BotPose1.pose.getRotation().plus(BotPose2.pose.getRotation()).div(2)
+                                  );
+        SmartDashboard.putNumber("llX", (BotPose1.pose.getX() + BotPose2.pose.getX()) / 2);
+        SmartDashboard.putNumber("llY", (BotPose1.pose.getY() + BotPose2.pose.getY()) / 2);
+        SmartDashboard.putNumber("Rota", (BotPose1.pose.getRotation().getDegrees() + BotPose2.pose.getRotation().getDegrees() / 2));
+        Bot_Pose.setRobotPose(avgPos);
+    }
 
     SmartDashboard.putNumber("heading", getHeading().getDegrees());
 
-    SmartDashboard.putData("drive", drive);
-    SmartDashboard.putData("turn", turn);
+    // SmartDashboard.putData("drive", drive);
+    // SmartDashboard.putData("turn", turn);
 
     SmartDashboard.putNumber("XPOS", getPose().getX());
     SmartDashboard.putNumber("YPOS", getPose().getY());

@@ -21,7 +21,7 @@ import frc.robot.Constants.ElevatorConstants;
 public class Coral extends SubsystemBase{
     private final DigitalInput Coral_Detect = new DigitalInput(CoralConstants.Coral_Sensor_ID);
 
-    private final TalonFX Coral_Motor = new TalonFX(CoralConstants.Coral_Motor_ID, "XiuBengBai");
+    private final TalonFX Coral_Motor = new TalonFX(CoralConstants.Coral_Motor_ID, "mech");
 
     public Coral(){
         // var CoralConfig = Coral_Motor.getConfigurator();

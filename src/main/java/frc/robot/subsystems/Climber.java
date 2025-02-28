@@ -16,10 +16,10 @@ import frc.robot.Constants.ElevatorConstants;
 
 // Motor * 2
 public class Climber extends SubsystemBase{
-    private final TalonFX Left_Motor = new TalonFX(ClimberConstants.LeftMotor_ID, "rio");
-    private final TalonFX Right_Motor = new TalonFX(ClimberConstants.RightMotor_ID, "rio");
+    private final TalonFX Left_Motor = new TalonFX(ClimberConstants.LeftMotor_ID, "mech");
+    private final TalonFX Right_Motor = new TalonFX(ClimberConstants.RightMotor_ID, "mech");
 
-    private final CANcoder Encoder = new CANcoder(ClimberConstants.Encoder_ID, "rio");
+    private final CANcoder Encoder = new CANcoder(ClimberConstants.Encoder_ID, "mech");
 
     // private final AbsoluteEncoder Encoder = new AbsoluteEncoder(){
     //     @Override

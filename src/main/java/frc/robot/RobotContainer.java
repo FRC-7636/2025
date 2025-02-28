@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -20,8 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Auto_Cmd.AutoDrive;
-import frc.robot.commands.Auto_Cmd.AutoDriveToBarge;
+import frc.robot.commands.Auto_Cmd.AutoDriveOneMeter;
 import frc.robot.commands.Auto_Cmd.AutoPath;
 import frc.robot.commands.Auto_Cmd.AutoToReef;
 import frc.robot.commands.Auto_Cmd.DriveToCoralStation;
@@ -66,14 +64,14 @@ import swervelib.SwerveInputStream;
 
 public class RobotContainer{
   // Controllers
-  private final CommandXboxController driverXbox = new CommandXboxController(0);
+  // private final CommandXboxController driverXbox = new CommandXboxController(0);
   private final XboxController Drive_Ctrl = new XboxController(1);
   private final XboxController Ctrl = new XboxController(2);
   // private CommandXboxController testCtrl = new CommandXboxController(2);
   // private final PS5Controller PS5 = new PS5Controller(3);
   
   // Subsystems
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/falcon"));
+  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/kraken"));
   private final Vision vision = new Vision();
   private final Algae algae = new Algae();
   private final Arm arm = new Arm();
@@ -95,15 +93,15 @@ public class RobotContainer{
   private final RL3 CMD_RL3 = new RL3(arm, coral, elevator);
 
   // Auto CMD
-  private final AutoDrive CMD_AutoDrive = new AutoDrive(drivebase);
-  private final AutoDriveToBarge CMD_AutoDriveToBarge = new AutoDriveToBarge(drivebase, limelight, elevator);
-  private final AutoPath CMD_AutoPath = new AutoPath(drivebase, drivebase.getSwerveDrive());
-  private final AutoToReef CMD_AutoToReef = new AutoToReef(drivebase);
-  private final DriveToCoralStation CMD_DriveToCoralStation = new DriveToCoralStation(drivebase, limelight);
-  private final DriveToReef18 CMD_DriveToReef18= new DriveToReef18(drivebase, limelight);
-  private final test test_ = new test(drivebase, drivebase.getSwerveDrive());
-  // private final Reef reef = new Reef(drivebase, limelight, vision);
-  // private final REEF2 reef2 = new REEF2(drivebase, limelight);
+  // private final AutoDrive CMD_AutoDrive = new AutoDrive(drivebase);
+  // // private final AutoDriveToBarge CMD_AutoDriveToBarge = new AutoDriveToBarge(drivebase, limelight, elevator);
+  // private final AutoPath CMD_AutoPath = new AutoPath(drivebase, drivebase.getSwerveDrive());
+  // private final AutoToReef CMD_AutoToReef = new AutoToReef(drivebase);
+  // private final DriveToCoralStation CMD_DriveToCoralStation = new DriveToCoralStation(drivebase, limelight);
+  // private final DriveToReef18 CMD_DriveToReef18= new DriveToReef18(drivebase, limelight);
+  // private final test test_ = new test(drivebase, drivebase.getSwerveDrive());
+  // // private final Reef reef = new Reef(drivebase, limelight, vision);
+  // // private final REEF2 reef2 = new REEF2(drivebase, limelight);
 
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -263,6 +261,8 @@ public class RobotContainer{
     new POVButton(Ctrl, 90).whileTrue(new InstantCommand(arm::Arm_Coral_UP)).onFalse(new InstantCommand(arm::Stop));
     new POVButton(Ctrl, 270).whileTrue(new InstantCommand(arm::Arm_Coral_DOWN)).onFalse(new InstantCommand(arm::Stop));
 
+    // new Trigger(Ctrl.axisGreaterThan(3, .1, null)).onTrue(CMD_DriveToReef18).onFalse(CMD_DriveToCoralStation);
+
     // Arm
     // Climber
     // Coral
@@ -322,12 +322,11 @@ public class RobotContainer{
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return CMD_AutoDriveToBarge;
+    return null;
             // .andThen(
             //   Commands.runOnce(() -> drivebase.drive(new ChassisSpeeds(0, 0, 0)), 
             //   drivebase
             //   ));
-    // return autoDriveToBarge;
   }
 
   public void setDriveMode() {

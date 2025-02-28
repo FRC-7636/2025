@@ -16,13 +16,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
 public class Arm extends SubsystemBase{
-    private final TalonFX Arm_Motor = new TalonFX(ArmConstants.Arm_ID, "XiuBengBai");
-    private final TalonFX Arm_Coral_Motor = new TalonFX(ArmConstants.Arm_Coral_ID, "XiuBengBai");
+    private final TalonFX Arm_Motor = new TalonFX(ArmConstants.Arm_ID, "mech");
+    private final TalonFX Arm_Coral_Motor = new TalonFX(ArmConstants.Arm_Coral_ID, "mech");
 
-    private final CANcoder Arm_Encoder = new CANcoder(ArmConstants.Arm_Encoder_ID, "XiuBengBai");
-    private final CANcoder Arm_Coral_Encoder = new CANcoder(ArmConstants.Arm_Coral_Encoder, "XiuBengBai");
+    private final CANcoder Arm_Encoder = new CANcoder(ArmConstants.Arm_Encoder_ID, "mech");
+    private final CANcoder Arm_Coral_Encoder = new CANcoder(ArmConstants.Arm_Coral_Encoder, "mech");
 
     private double Arm_Pos = 0;
+    private double LastPos = 0;
+    private int rotation = 0;
 
     public Arm(){
         var Arm_Motor_Config = Arm_Motor.getConfigurator();
@@ -36,9 +38,9 @@ public class Arm extends SubsystemBase{
 
         // set feedback sensor as integrated sensor
         Arm_Motor_Config.apply(new FeedbackConfigs()
-                .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor));
+                .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder).withFeedbackRemoteSensorID(ArmConstants.Arm_Encoder_ID));
         Arm_Coral_Motor_Config.apply(new FeedbackConfigs()
-                .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor));        
+                .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder).withFeedbackRemoteSensorID(ArmConstants.Arm_Coral_Encoder));                 
 
         // set maximum acceleration and velocity        
         Arm_Motor_Config.apply(new MotionMagicConfigs()
@@ -52,7 +54,7 @@ public class Arm extends SubsystemBase{
         Arm_Motor_Config.setPosition(0);
         Arm_Coral_Motor_Config.setPosition(0);
         
-        // PIDConfig
+        // Arm PIDConfig
         Slot0Configs Arm_PIDConfig = new Slot0Configs();
         Arm_PIDConfig.kP = ArmConstants.Arm_P;
         Arm_PIDConfig.kI = ArmConstants.Arm_I;
@@ -60,12 +62,13 @@ public class Arm extends SubsystemBase{
         Arm_PIDConfig.kV = ArmConstants.Arm_F;
         Arm_Motor_Config.apply(Arm_PIDConfig);
 
-        Slot0Configs Coral_PIDConfig = new Slot0Configs();
+        // Arm_Coral PIDConfig
+        Slot0Configs Arm_Coral_PIDConfig = new Slot0Configs();
         Arm_PIDConfig.kP = ArmConstants.Arm_Coral_P;
         Arm_PIDConfig.kI = ArmConstants.Arm_Coral_I;
         Arm_PIDConfig.kD = ArmConstants.Arm_Coral_D;
         Arm_PIDConfig.kV = ArmConstants.Arm_Coral_F;
-        Arm_Coral_Motor_Config.apply(Coral_PIDConfig);
+        Arm_Coral_Motor_Config.apply(Arm_Coral_PIDConfig);
     }
 
     public double getArmPos(){
@@ -172,5 +175,14 @@ public class Arm extends SubsystemBase{
         getArmCoralPos();
         SmartDashboard.putNumber("Arm_Pos", getArmPos());
         SmartDashboard.putNumber("Arm_Coral_Pose", getArmCoralPos());
+
+        double currentPos = (Arm_Encoder.getAbsolutePosition().getValueAsDouble());
+        if (LastPos - currentPos >= 0.1) {
+            rotation++;
+        } else if (LastPos - currentPos <= -0.1) {
+            rotation--;
+        }
+        LastPos = (Arm_Encoder.getAbsolutePosition().getValueAsDouble()) ;
+        SmartDashboard.putNumber("Eleva_pos", (currentPos + rotation));
     }
 }

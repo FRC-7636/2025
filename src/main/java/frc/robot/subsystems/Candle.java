@@ -8,7 +8,7 @@ import com.ctre.phoenix.led.StrobeAnimation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Candle extends SubsystemBase{
-    private final CANdle candle = new CANdle(10, "rio");
+    private final CANdle candle = new CANdle(10, "mech");
     private final RainbowAnimation rainbowAnimation = new RainbowAnimation(100, 1, 167);
 
     public Candle() {

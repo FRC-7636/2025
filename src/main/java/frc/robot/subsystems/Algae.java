@@ -17,7 +17,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -25,9 +24,9 @@ import frc.robot.Constants.AlgaeConstants;
 
 // 2 Karken Motor - for 
 public class Algae extends SubsystemBase {
-    private final TalonFX Algae_Ctrl = new TalonFX(AlgaeConstants.Algae_Ctrl_ID, "CC2"); 
+    private final TalonFX Algae_Ctrl = new TalonFX(AlgaeConstants.Algae_Ctrl_ID, "mech"); 
     // private final TalonFX Algae_Ctrl = new TalonFX(AlgaeConstants.Algae_Ctrl_ID, "cantivore");
-    private final TalonFX Algae_Roller = new TalonFX(AlgaeConstants.Algae_Roller_ID, "CC2");
+    private final TalonFX Algae_Roller = new TalonFX(AlgaeConstants.Algae_Roller_ID, "mech");
 
     private final SparkMaxConfig Intake_Ctrl_Config; //
     private final AbsoluteEncoder Intake_Ctrl_Encoder = new AbsoluteEncoder(){

@@ -88,7 +88,7 @@ public final class Constants{
         public static final int Arm_ID = 31;
         public static final int Arm_Coral_ID = 32;
         
-        public static final int Arm_Encoder_ID = 60;
+        public static final int Arm_Encoder_ID = 33;
         public static final int Arm_Coral_Encoder = 34;
 
         // Arm Config 
@@ -128,10 +128,10 @@ public final class Constants{
     // Climber Constants
     public static class ClimberConstants {
         // Climber ID
-        public static final int LeftMotor_ID = 42;
-        public static final int RightMotor_ID = 41;
+        public static final int LeftMotor_ID = 41;
+        public static final int RightMotor_ID = 42;
 
-        public static final int Encoder_ID = 42;
+        public static final int Encoder_ID = 43;
         
         // Climber Config
         public static final boolean LeftMotor_Inverted = false;
@@ -148,10 +148,10 @@ public final class Constants{
     // Elevator Constants
     public static class ElevatorConstants{
         // Elevator ID
-        public static final int LeftMotor_ID = 41;
-        public static final int RightMotor_ID = 42;
+        public static final int LeftMotor_ID = 51;
+        public static final int RightMotor_ID = 52;
 
-        public static final int Encoder_ID = 0;
+        public static final int Encoder_ID = 53;
 
         // Elevator Config
         public static final boolean LeftMotor_Inverted = true;
@@ -175,11 +175,11 @@ public final class Constants{
 
     public static class CoralConstants{
         // Coral ID
-        public static final int Coral_Motor_ID = 51;
-        public static final int Arm_Left_Motor = 52;
-        public static final int Arm_Right_Motor = 53;
+        public static final int Coral_Motor_ID = 61;
+        public static final int Arm_Left_Motor = 62;
+        public static final int Arm_Right_Motor = 63;
 
-        public static final int Coral_Sensor_ID = 23;
+        public static final int Coral_Sensor_ID = 0;
 
         // Coral Config
         public static final boolean Coral_Inverted = false;

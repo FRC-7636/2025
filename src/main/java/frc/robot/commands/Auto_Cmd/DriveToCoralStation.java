@@ -17,15 +17,55 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class DriveToCoralStation extends SequentialCommandGroup{
     private Pose2d avgPose;
-    
+        
     public DriveToCoralStation(SwerveSubsystem swerve, limelight limelight){
         boolean auto = false;
         PathPlannerPath path = null;
+
+        Pose2d LLrobot_1 = limelight.getRobotPose().toPose2d();
+        Pose2d LLrobot_2 = limelight.getRobotPose_two().toPose2d();
+
+        // if(LimelightHelpers.getFiducialID("") == -1){
+        //     swerve.getSwerveDrive().resetOdometry(LLrobot_2); 
+        // }
+        // else if(LimelightHelpers.getFiducialID("limelight-two") == -1){
+        //     swerve.getSwerveDrive().resetOdometry(LLrobot_1); 
+        // }
+        // else if (LimelightHelpers.getFiducialID("limelight-two") != -1 && LimelightHelpers.getFiducialID("limelight-two") != -1){
+        //     avgPose = new Pose2d( (LLrobot_1.getX() + LLrobot_2.getX() ) / 2,
+        //                           (LLrobot_1.getY() + LLrobot_2.getY() ) / 2, 
+        //                            LLrobot_1.getRotation().plus(LLrobot_2.getRotation()).div(2)
+        //                         );
+        //     swerve.getSwerveDrive().resetOdometry(avgPose);
+        // }
+        // else {
+        //     swerve.getSwerveDrive().resetOdometry(swerve.getPose());
+        // }
+
         try {
             path = PathPlannerPath.fromPathFile("DriveToReef18_2");
 
             // swerve.getSwerveDrive().resetOdometry(new Pose2d(0.901, 4.031, Rotation2d.fromDegrees(0)));
             swerve.getSwerveDrive().resetOdometry(LimelightHelpers.getBotPose2d_wpiBlue("limelight-two"));
+            // swerve.getSwerveDrive().resetOdometry(new Pose2d(
+            //                                                     if(LimelightHelpers.getFiducialID("") == -1){
+            //                                                         swerve.getSwerveDrive().resetOdometry(LLrobot_2); 
+            //                                                     }
+            //                                                     else if(LimelightHelpers.getFiducialID("limelight-two") == -1){
+            //                                                         swerve.getSwerveDrive().resetOdometry(LLrobot_1); 
+            //                                                     }
+            //                                                     else if (LimelightHelpers.getFiducialID("limelight-two") != -1 && LimelightHelpers.getFiducialID("limelight-two") != -1){
+            //                                                         avgPose = new Pose2d( (LLrobot_1.getX() + LLrobot_2.getX() ) / 2,
+            //                                                                             (LLrobot_1.getY() + LLrobot_2.getY() ) / 2, 
+            //                                                                             LLrobot_1.getRotation().plus(LLrobot_2.getRotation()).div(2)
+            //                                                                             );
+            //                                                         swerve.getSwerveDrive().resetOdometry(avgPose);
+            //                                                     }
+            //                                                     else {
+            //                                                         swerve.getSwerveDrive().resetOdometry(swerve.getPose());
+            //                                                     }
+            //                                                 )
+            //                                       );
 
         } catch (FileVersionException e) {
             // TODO Auto-generated catch block
@@ -38,8 +78,6 @@ public class DriveToCoralStation extends SequentialCommandGroup{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }       
-        Pose2d LLrobot_1 = limelight.getRobotPose().toPose2d();
-        Pose2d LLrobot_2 = limelight.getRobotPose_two().toPose2d();
 
         addRequirements(swerve);
         addCommands(Commands.run( () -> { 

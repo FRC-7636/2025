@@ -16,8 +16,7 @@ import frc.robot.Constants.ElevatorConstants;
 
 // Motor * 2
 public class Climber extends SubsystemBase{
-    private final TalonFX Left_Motor = new TalonFX(ClimberConstants.LeftMotor_ID, "mech");
-    private final TalonFX Right_Motor = new TalonFX(ClimberConstants.RightMotor_ID, "mech");
+    private final TalonFX Climber_Motor = new TalonFX(ClimberConstants.LeftMotor_ID, "mech");
 
     private final CANcoder Encoder = new CANcoder(ClimberConstants.Encoder_ID, "mech");
 
@@ -32,33 +31,21 @@ public class Climber extends SubsystemBase{
     // };
 
     public Climber(){
-        var Left_Motor_Config = Left_Motor.getConfigurator();
-        var Right_Motor_Config = Right_Motor.getConfigurator();
+        var Left_Motor_Config = Climber_Motor.getConfigurator();
 
-        Left_Motor.setNeutralMode(NeutralModeValue.Brake);
-        Right_Motor.setNeutralMode(NeutralModeValue.Brake);
+        Climber_Motor.setNeutralMode(NeutralModeValue.Brake);
 
-        Left_Motor.setInverted(ClimberConstants.LeftMotor_Inverted);
-        Right_Motor.setInverted(ClimberConstants.RightMotor_Inverted);
+        Climber_Motor.setInverted(ClimberConstants.LeftMotor_Inverted);
 
         // set feedback sensor as integrated sensor
         Left_Motor_Config.apply(new FeedbackConfigs()
-                .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor));
-        Right_Motor_Config.apply(new FeedbackConfigs()
                 .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor));
 
         // set maximum acceleration and velocity
         Left_Motor_Config.apply(new MotionMagicConfigs()
                 .withMotionMagicAcceleration(ElevatorConstants.MAX_ACCEL)
                 .withMotionMagicCruiseVelocity(ElevatorConstants.MAX_VELOCITY));
-
-        Right_Motor_Config.apply(new MotionMagicConfigs()
-                .withMotionMagicAcceleration(ElevatorConstants.MAX_ACCEL)
-                .withMotionMagicCruiseVelocity(ElevatorConstants.MAX_VELOCITY));
-
-        // Sets the mechanism position of the device in mechanism rotations.
         Left_Motor_Config.setPosition(0);
-        Right_Motor_Config.setPosition(0);
 
         // PIDConfig
         Slot0Configs PIDConfig = new Slot0Configs();
@@ -67,7 +54,6 @@ public class Climber extends SubsystemBase{
         PIDConfig.kD = ClimberConstants.D;
         PIDConfig.kV = ClimberConstants.F;
         Left_Motor_Config.apply(PIDConfig);
-        Right_Motor_Config.apply(PIDConfig);
     }
 
     public double getAbsolutePosition(){
@@ -75,18 +61,19 @@ public class Climber extends SubsystemBase{
     }
 
     public void Climb(){
-        Left_Motor.setControl(new MotionMagicDutyCycle(ClimberConstants.Climb_Angle));
-        Right_Motor.setControl(new MotionMagicDutyCycle(ClimberConstants.Climb_Angle));
+        Climber_Motor.setControl(new MotionMagicDutyCycle(ClimberConstants.Climb_Angle));
+    }
+
+    public void Climb_Zero(){
+        Climber_Motor.setControl(new MotionMagicDutyCycle(ClimberConstants.Climb_Zero));
     }
 
     public void Up(){
-        Left_Motor.set(0.3);
-        Right_Motor.set(0.3);
+        Climber_Motor.set(0.3);
     }
 
     public void Down(){
-        Left_Motor.set(0.3);
-        Right_Motor.set(0.3);
+        Climber_Motor.set(0.3);
     }
     @Override 
     public void periodic(){

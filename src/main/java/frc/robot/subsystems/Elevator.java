@@ -110,12 +110,12 @@ public class Elevator extends SubsystemBase{
     }
 
     public void ELE_Up(){
-        Left_Motor.set(0.4);
-        Right_Motor.set(0.4);
-    }
-    public void ELE_Down(){
         Left_Motor.set(-0.4);
         Right_Motor.set(-0.4);
+    }
+    public void ELE_Down(){
+        Left_Motor.set(0.4);
+        Right_Motor.set(0.4);
     }
 
     public void ELE_Stop(){

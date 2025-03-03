@@ -1651,9 +1651,9 @@ public class LimelightHelpers {
     public static void getOrientation(SwerveDrive swerve){
         boolean doRejectUpdate = false;
         SetRobotOrientation("", swerve.getYaw().getDegrees(), 0, 0, 0, 0, 0);
-        SetRobotOrientation("two", swerve.getYaw().getDegrees(), 0, 0, 0, 0, 0);
+        SetRobotOrientation("limelight-two", swerve.getYaw().getDegrees(), 0, 0, 0, 0, 0);
         PoseEstimate megatag = getBotPoseEstimate_wpiBlue_MegaTag2("");
-        PoseEstimate megatag2 = getBotPoseEstimate_wpiBlue_MegaTag2("two");
+        PoseEstimate megatag2 = getBotPoseEstimate_wpiBlue_MegaTag2("limelight-two");
 
         if(Math.abs((swerve.getGyro().getYawAngularVelocity().magnitude())) > 720 ){
             doRejectUpdate = true;

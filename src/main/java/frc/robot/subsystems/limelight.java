@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.Constants.LimelightConstants;
 
 public class limelight extends SubsystemBase{
@@ -59,23 +60,27 @@ public class limelight extends SubsystemBase{
         return LimelightHelpers.getBotPose2d("").getRotation().getDegrees();
     }    
 
-    public Pose2d getLLPose(){
-        if(TagID == -1 && TagID2 != -1){
-            return avgPose = getRobotPose_two().toPose2d();
-        }
-        else if(TagID2 == -1 && TagID != -1){
-            return avgPose = getRobotPose().toPose2d();
-        }
-        else if (TagID != -1 && TagID2 != -1){
-            return avgPose = new Pose2d( (getRobotPose().toPose2d().getX() + getRobotPose_two().toPose2d().getX()) / 2,
-                                         (getRobotPose().toPose2d().getY() + getRobotPose_two().toPose2d().getY()) / 2,
-                                         getRobotPose().toPose2d().getRotation().plus(getRobotPose_two().toPose2d().getRotation()).div(2)
-                                       );
-        }
-        else{
-            return new Pose2d();
-        }
-    }
+    // public Pose2d getLLPose(){
+    //     PoseEstimate megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
+    //     PoseEstimate megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-two");
+
+
+    //     if(megatag.tagCount < 1 && megatag2.tagCount < 1){
+    //         return avgPose = getRobotPose_two().toPose2d();
+    //     }
+    //     else if(megatag2.tagCount < 1 && megatag.tagCount < 1){
+    //         return avgPose = getRobotPose().toPose2d();
+    //     }
+    //     else if (megatag.tagCount < 1 && megatag2.tagCount < 1){
+    //         return avgPose = new Pose2d( (getRobotPose().toPose2d().getX() + getRobotPose_two().toPose2d().getX()) / 2,
+    //                                      (getRobotPose().toPose2d().getY() + getRobotPose_two().toPose2d().getY()) / 2,
+    //                                       getRobotPose().toPose2d().getRotation().plus(getRobotPose_two().toPose2d().getRotation()).div(2)
+    //                                    );
+    //     }
+    //     else{
+    //         return new Pose2d();
+    //     }
+    // }
 
     @Override
     public void periodic(){
@@ -84,11 +89,11 @@ public class limelight extends SubsystemBase{
             getRobotPose_two();
             robotToTarget();
             deltaRobotHeadingDeg();
-            getLLPose();
+            // getLLPose();
 
         LL_Pose.setRobotPose(avgPose);
         // LL_Pose.setRobotPose(getRobotPose_two().toPose2d());
-        SmartDashboard.putData("LL_Pose", LL_Pose);
+        // SmartDashboard.putData("LL_Pose", LL_Pose);
         SmartDashboard.putNumber("LX", LimelightHelpers.getTX("limelight-two"));
         SmartDashboard.putNumber("LY", LimelightHelpers.getTY("limelight-two"));
         SmartDashboard.putNumber("LR", getRobotPose_two().getRotation().getAngle());

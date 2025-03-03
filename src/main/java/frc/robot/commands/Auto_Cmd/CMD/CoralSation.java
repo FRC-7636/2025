@@ -1,6 +1,4 @@
-package frc.robot.commands.Group_Cmd;
-
-import java.security.interfaces.EdECKey;
+package frc.robot.commands.Auto_Cmd.CMD;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -8,12 +6,12 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 
-public class Coral_Station extends Command{
+public class CoralSation extends Command{
     private final Arm arm;
     private final Coral coral;
     private final Elevator elevator;
 
-    public Coral_Station(Arm arm, Coral coral, Elevator elevator){
+    public CoralSation(Arm arm, Coral coral, Elevator elevator){
         this.arm = arm;
         this.coral = coral;
         this.elevator = elevator;
@@ -22,9 +20,12 @@ public class Coral_Station extends Command{
 
     public void excute(){
         arm.Arm_Station();
+        new WaitCommand(0.1);
+        coral.Coral_Suck();
         
         if(!coral.CoarlDetected()){
-            arm.Arm_Station();
+            coral.Coral_Stop();
+            arm.Arm_StartUp();
             elevator.ELE_Floor();
         }
     }

@@ -119,7 +119,7 @@ public class Vision extends SubsystemBase{
     int aprilTag = (int) LimelightHelpers.getFiducialID("");
     if(aprilTag != -1){
       Optional<Pose3d> aprilTagPose3d = fieldLayout.getTagPose(aprilTag);
-      Transform2d robotOffset = new Transform2d();
+      Transform2d robotOffset = new Transform2d(-0.41, 0.0, Rotation2d.fromDegrees(180));
       if (aprilTagPose3d.isPresent()){
           return aprilTagPose3d.get().toPose2d().transformBy(robotOffset);
       }
@@ -587,8 +587,8 @@ public class Vision extends SubsystemBase{
           curStdDevs = estStdDevs;
         }
       }
+    
     }
-
 
   }
 

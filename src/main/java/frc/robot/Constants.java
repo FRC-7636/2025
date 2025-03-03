@@ -86,28 +86,19 @@ public final class Constants{
     public static class ArmConstants{
         // Arm ID
         public static final int Arm_ID = 31;
-        public static final int Arm_Coral_ID = 32;
         
         public static final int Arm_Encoder_ID = 33;
-        public static final int Arm_Coral_Encoder = 34;
 
         // Arm Config 
-        public static final boolean Arm_Coral_Inverted = false;
         public static final boolean Arm_Inverted = false;
 
+        public static final double Arm_Zero = 0;
         public static final double Arm_StartUp = 0;
         public static final double Arm_Station = 0;
         public static final double Arm_RL1 = 40;
         public static final double Arm_RL2 = 40;
         public static final double Arm_RL3 = 40;
         public static final double Arm_RL4 = 0;
-
-        public static final double Arm_Coral_StartUp = 0;
-        public static final double Arm_Coral_Station = 0;
-        public static final double Arm_Coral_RL1 = 0.04;
-        public static final double Arm_Coral_RL2 = 0.1;
-        public static final double Arm_Coral_RL3 = 0.1;
-        public static final double Arm_Coral_RL4 = 0;
 
         public static final double MAX_ACCEL = 500;
         public static final double MAX_VELOCITY = 200;
@@ -129,7 +120,6 @@ public final class Constants{
     public static class ClimberConstants {
         // Climber ID
         public static final int LeftMotor_ID = 41;
-        public static final int RightMotor_ID = 42;
 
         public static final int Encoder_ID = 43;
         
@@ -137,6 +127,7 @@ public final class Constants{
         public static final boolean LeftMotor_Inverted = false;
         public static final boolean RightMotor_Inverted = false;
         public static final double Climb_Angle = 0;
+        public static final double Climb_Zero = 0;
 
         // Climber PIDF
         public static final double P = 0;

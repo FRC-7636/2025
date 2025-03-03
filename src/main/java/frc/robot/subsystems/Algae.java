@@ -18,7 +18,9 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.AlgaeConstants;
 
@@ -111,6 +113,12 @@ public class Algae extends SubsystemBase {
     }
 
     public void Stop(){
+        Algae_Ctrl.set(0);
+        Algae_Roller.set(0);
+    }
+
+    public void Algae_Zero(){
+        Commands.runOnce( () -> Algae_Ctrl.set(0.15), null).alongWith(new WaitCommand(0.2).andThen( () ->Algae_Ctrl.set(0)));
         Algae_Ctrl.set(0);
         Algae_Roller.set(0);
     }

@@ -20,14 +20,11 @@ public class RL3 extends Command {
 
     public void excute(){
         elevator.ELE_RL3();
-        arm.Arm_Coral_RL3();
-        new WaitCommand(0.5);
-
-        coral.Coral_Shoot();
-        new WaitCommand(0.5);
-
-        coral.Coral_Stop();
-        arm.Arm_Coral_Sation();
-        elevator.ELE_Floor();
+        arm.Arm_RL3();
+        
+        if(coral.CoarlDetected()){
+            arm.Arm_Station();
+            elevator.ELE_Floor();
+        }
         }
 }

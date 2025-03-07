@@ -2,7 +2,12 @@ package frc.robot.subsystems;
 
 import java.util.zip.CRC32C;
 
+import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -23,93 +28,69 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.AlgaeConstants;
+import frc.robot.Constants.ArmConstants;
 
 // 2 Karken Motor - for 
 public class Algae extends SubsystemBase {
-    private final TalonFX Algae_Ctrl = new TalonFX(AlgaeConstants.Algae_Ctrl_ID, "mech"); 
-    // private final TalonFX Algae_Ctrl = new TalonFX(AlgaeConstants.Algae_Ctrl_ID, "cantivore");
-    private final TalonFX Algae_Roller = new TalonFX(AlgaeConstants.Algae_Roller_ID, "mech");
-
-    private final SparkMaxConfig Intake_Ctrl_Config; //
-    private final AbsoluteEncoder Intake_Ctrl_Encoder = new AbsoluteEncoder(){
-        @Override
-        public double getPosition() {
-            return 0;
-        }
-        public double getVelocity() {
-            return 0;
-        }
-    };
-
-    // private final SparkClosedLoopController Intake_Ctrl_PID = Algae_Ctrl.getClosedLoopController();
+    private final TalonFX Algae_Ctrl = new TalonFX(AlgaeConstants.Algae_Ctrl_ID, "rio"); 
+    private final TalonFX Algae_Roller = new TalonFX(AlgaeConstants.Algae_Roller_ID, "rio");
         
     public Algae(){
-        Intake_Ctrl_Config = new SparkMaxConfig(); //
-        AbsoluteEncoderConfig Intake_Ctrl_Encoder_Config = new AbsoluteEncoderConfig();
-        var Roller_Config = Algae_Roller.getConfigurator();
-
-        // Algae_ctrl Config
-        Intake_Ctrl_Config.idleMode(SparkBaseConfig.IdleMode.kBrake);
-        Intake_Ctrl_Config.inverted(AlgaeConstants.Algae_ctrl_Inverted);
-        Intake_Ctrl_Config.encoder.positionConversionFactor(1);
-        Intake_Ctrl_Config.closedLoop.feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-        Intake_Ctrl_Config.closedLoop.pid(0.025, 0.0, 0.0, ClosedLoopSlot.kSlot2);
-        Intake_Ctrl_Config.closedLoop.pid(2560, 0.0, 0.0, ClosedLoopSlot.kSlot1);  
-
-        // Algae_Ctrl.configure(Intake_Ctrl_Config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
-
-        // ShuShu Encoder Config
-        Intake_Ctrl_Encoder_Config.inverted(Constants.AlgaeConstants.Algae_ctrl_Inverted);
-        Intake_Ctrl_Encoder_Config.positionConversionFactor(360);
+        var Algae_Ctrl_Config = Algae_Ctrl.getConfigurator();
 
         Algae_Roller.setNeutralMode(NeutralModeValue.Brake);
         Algae_Roller.setInverted(AlgaeConstants.Algae_Roller_Inverted);
+
+        // set feedback sensor as integrated sensor
+        Algae_Ctrl_Config.apply(new FeedbackConfigs()
+                .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor));
+
+        // set maximum acceleration and velocity        
+        Algae_Ctrl_Config.apply(new MotionMagicConfigs()
+                .withMotionMagicAcceleration(ArmConstants.MAX_ACCEL)
+                .withMotionMagicCruiseVelocity(ArmConstants.MAX_VELOCITY));
+        
+        // Arm PIDConfig
+        Slot0Configs Algae_Ctrl_PIDConfig = new Slot0Configs();
+        Algae_Ctrl_PIDConfig.kP = AlgaeConstants.Algae_P;
+        Algae_Ctrl_PIDConfig.kI = AlgaeConstants.Algae_I;
+        Algae_Ctrl_PIDConfig.kD = AlgaeConstants.Algae_D;
+        Algae_Ctrl_PIDConfig.kV = AlgaeConstants.Algae_F;
+        Algae_Ctrl_Config.apply(Algae_Ctrl_PIDConfig);
+
+        Algae_Ctrl.setPosition(0);
     }
 
     public double getPosition(){
-        return Intake_Ctrl_Encoder.getPosition();
-    }
-
-    public double getFurtherest(){
-        return (1.5 - Intake_Ctrl_Encoder.getPosition());
-    }
- 
-    public double getShortest(){
-        return (1.5 - Intake_Ctrl_Encoder.getPosition() - 1.5);
+        return Algae_Ctrl.getPosition().getValueAsDouble();
     }
     
-    public void Intake_out(){
-        // Intake_Ctrl_PID.setReference(getFurtherest() * 2 * Math.PI, ControlType.kPosition, ClosedLoopSlot.kSlot2); 
-        Algae_Ctrl.set(0.1);
-        // Timer.delay(2);
-        // Algae_Ctrl.set(0);
+    public void Algae_Zero(){
+        Algae_Ctrl.setControl(new MotionMagicDutyCycle(AlgaeConstants.Algae_Zero));
+    }
+
+    public void Algae_out(){
+       Algae_Ctrl.setControl(new MotionMagicDutyCycle(AlgaeConstants.Algae_Out));
    }
 
-    public void Intake_back(){
-        // Intake_Ctrl_PID.setReference(getShortest() * 2 * Math.PI, ControlType.kPosition, ClosedLoopSlot.kSlot1);
-        Algae_Ctrl.set(-0.15);
-        // Timer.delay(2);
-        // Algae_Ctrl.set(0);
+    public void Algae_In(){
+        Algae_Ctrl.setControl(new MotionMagicDutyCycle(AlgaeConstants.Algae_In));
     }
 
-    public void Intake_hold(){
-    //     Intake_Ctrl_PID.setReference(getFurtherest() * 2 * Math.PI, ControlType.kPosition, ClosedLoopSlot.kSlot1);
+    public void Algae_back(){
+        Algae_Ctrl.set(0.8);
     }
 
-    public void step_out(){
-        Algae_Ctrl.set(0.1);
-    }
-
-    public void step_in(){
-        Algae_Ctrl.set(-0.2);
+    public void Algae_Stop(){
+        Algae_Ctrl.set(0);
     }
 
     public void suck(){
-        Algae_Roller.set(0.3);
+        Algae_Roller.set(0.6);
     }
 
     public void shoot(){
-        Algae_Roller.set(-0.35);
+        Algae_Roller.set(-0.8);
     }
 
     public void Stop(){
@@ -117,14 +98,11 @@ public class Algae extends SubsystemBase {
         Algae_Roller.set(0);
     }
 
-    public void Algae_Zero(){
-        Commands.runOnce( () -> Algae_Ctrl.set(0.15), null).alongWith(new WaitCommand(0.2).andThen( () ->Algae_Ctrl.set(0)));
-        Algae_Ctrl.set(0);
-        Algae_Roller.set(0);
-    }
-
     @Override 
     public void periodic(){
         SmartDashboard.putNumber("Al_Pos", getPosition());
+        if(Algae_Ctrl.getPosition().getValueAsDouble() < -1.8 || Algae_Ctrl.getPosition().getValueAsDouble() > 0.1){
+            Algae_Ctrl.set(0);
+        }
     }
 }

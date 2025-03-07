@@ -22,11 +22,6 @@ public class Coral_Station extends Command{
 
     public void excute(){
         arm.Arm_Station();
-        
-        if(!coral.CoarlDetected()){
-            arm.Arm_Station();
-            elevator.ELE_Floor();
-        }
     }
     
 }

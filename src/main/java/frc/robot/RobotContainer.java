@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -26,6 +27,8 @@ import frc.robot.commands.Auto_Cmd.AutoPath;
 import frc.robot.commands.Auto_Cmd.AutoToReef;
 import frc.robot.commands.Auto_Cmd.DriveToCoralStation;
 import frc.robot.commands.Auto_Cmd.DriveToReef18;
+import frc.robot.commands.Auto_Cmd.Follow;
+// import frc.robot.commands.Auto_Cmd.FollowPath;
 import frc.robot.commands.Auto_Cmd.REEF2;
 import frc.robot.commands.Auto_Cmd.Reef;
 import frc.robot.commands.Auto_Cmd.test;
@@ -55,11 +58,13 @@ import frc.robot.subsystems.swervedrive.Vision;
 import frc.robot.subsystems.Candle;
 
 import java.io.File;
+import java.security.Timestamp;
 import java.util.PrimitiveIterator;
 import java.util.function.Supplier;
 
 import javax.xml.crypto.KeySelector.Purpose;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -76,12 +81,9 @@ import swervelib.SwerveInputStream;
 
 public class RobotContainer{
   // Controllers
-  // private final CommandXboxController driverXbox = new CommandXboxController(0);
-  private final XboxController Drive_Ctrl = new XboxController(1);
-  private final XboxController Ctrl = new XboxController(2);
-  // private CommandXboxController testCtrl = new CommandXboxController(2);
-  private final PS5Controller PS5 = new PS5Controller(3);
-  
+  private final PS5Controller Driver_Ctrl = new PS5Controller(1);
+  private final XboxController Assist_Ctrl = new XboxController(2);
+ 
   // Subsystems
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/kraken"));
   private final Vision vision = new Vision();
@@ -119,7 +121,9 @@ public class RobotContainer{
   private final AutoToReef CMD_AutoToReef = new AutoToReef(drivebase);
   private final DriveToCoralStation CMD_DriveToCoralStation = new DriveToCoralStation(drivebase, limelight);
   private final DriveToReef18 CMD_DriveToReef18= new DriveToReef18(drivebase, limelight, vision);
+  private final Follow CMD_Follow = new Follow(drivebase);
   private final test test_ = new test(drivebase, drivebase.getSwerveDrive());
+  // private final FollowPath CMD_FollowPath = new FollowPath(drivebase, elevator, limelight);
   // private final Reef reef = new Reef(drivebase, limelight, vision);
   // private final REEF2 reef2 = new REEF2(drivebase, limelight);
 
@@ -133,13 +137,13 @@ public class RobotContainer{
   // left stick controls translation, right stick controls the rotational velocity, buttons are quick rotation positions to different ways to face.
   // WARNING: default buttons are on the same buttons as the ones defined in configureBindings.
   AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
-                                                                () -> -MathUtil.applyDeadband(Drive_Ctrl.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-                                                                () -> -MathUtil.applyDeadband(Drive_Ctrl.getLeftX(), OperatorConstants.DEADBAND),
-                                                                () -> -MathUtil.applyDeadband(Drive_Ctrl.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
-                                                                () -> Drive_Ctrl.getRawButtonPressed(4),
-                                                                () -> Drive_Ctrl.getRawButton(2),
-                                                                () -> Drive_Ctrl.getRawButton(1),
-                                                                () -> Drive_Ctrl.getRawButton(3)
+                                                                () -> -MathUtil.applyDeadband(Driver_Ctrl.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+                                                                () -> -MathUtil.applyDeadband(Driver_Ctrl.getLeftX(), OperatorConstants.DEADBAND),
+                                                                () -> -MathUtil.applyDeadband(Driver_Ctrl.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+                                                                () -> Driver_Ctrl.getRawButtonPressed(4),
+                                                                () -> Driver_Ctrl.getRawButton(2),
+                                                                () -> Driver_Ctrl.getRawButton(1),
+                                                                () -> Driver_Ctrl.getRawButton(3)
                                                                 );
 
   // AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
@@ -156,9 +160,9 @@ public class RobotContainer{
    * by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-      () -> Drive_Ctrl.getLeftY() * -1,
-      () -> Drive_Ctrl.getLeftX() * -1)
-      .withControllerRotationAxis(Drive_Ctrl::getRightX)
+      () -> Driver_Ctrl.getLeftY() * -1,
+      () -> Driver_Ctrl.getLeftX() * -1)
+      .withControllerRotationAxis(Driver_Ctrl::getRightX)
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
@@ -168,21 +172,22 @@ public class RobotContainer{
    * input stream.
    */
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(
-                                                                                              Drive_Ctrl::getRightX,
-                                                                                              Drive_Ctrl::getRightY)
+                                                                                              Driver_Ctrl::getRightX,
+                                                                                              Driver_Ctrl::getRightY)
                                                                                               .headingWhile(true);
+  Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
+                                                                        Driver_Ctrl.getLeftY() * -6,
+                                                                        Driver_Ctrl.getLeftX() * -6, 
+                                                                        Driver_Ctrl.getRightX() * 
+                                                                        10
+                                                                        );
 
   // Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
-  //                                                                       Drive_Ctrl.getLeftY() * -3,
-  //                                                                       Drive_Ctrl.getLeftX() * -3, 
-  //                                                                       Drive_Ctrl.getRightX() * -10
+  //                                                                       Driver_Ctrl.getLeftY() * 0,
+  //                                                                       Driver_Ctrl.getLeftX() * 0, 
+  //                                                                       Driver_Ctrl.getRightX() * 0
   //                                                                       );
 
-  Supplier<ChassisSpeeds> fieldRelativeSpeeds = () -> new ChassisSpeeds(
-                                                                        Drive_Ctrl.getLeftY() * 0,
-                                                                        Drive_Ctrl.getLeftX() * 0, 
-                                                                        Drive_Ctrl.getRightX() * 0
-                                                                        );
 
   // Applies deadbands and inverts controls because joysticks are back-right positive while robot controls are front-left positive
   // left stick controls translation, right stick controls the desired angle NOT angular rotation
@@ -196,16 +201,16 @@ public class RobotContainer{
   Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
 
   SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                    () -> -Drive_Ctrl.getLeftY(),
-                                                                    () -> -Drive_Ctrl.getLeftX())
-                                                                    .withControllerRotationAxis(() -> Drive_Ctrl.getRawAxis(2))
+                                                                    () -> -Driver_Ctrl.getLeftY(),
+                                                                    () -> -Driver_Ctrl.getLeftX())
+                                                                    .withControllerRotationAxis(() -> Driver_Ctrl.getRawAxis(2))
                                                                     .deadband(OperatorConstants.DEADBAND)
                                                                     .scaleTranslation(0.8)
                                                                     .allianceRelativeControl(true);
   // Derive the heading axis with math!
   SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
-                                           .withControllerHeadingAxis(() -> Math.sin(Drive_Ctrl.getRawAxis(2) * Math.PI) * (Math.PI * 2),
-                                                                      () -> Math.cos(Drive_Ctrl.getRawAxis(2) * Math.PI) * (Math.PI * 2)).headingWhile(true);
+                                           .withControllerHeadingAxis(() -> Math.sin(Driver_Ctrl.getRawAxis(2) * Math.PI) * (Math.PI * 2),
+                                                                      () -> Math.cos(Driver_Ctrl.getRawAxis(2) * Math.PI) * (Math.PI * 2)).headingWhile(true);
   Command driveFieldOrientedDirectAngleSim = drivebase.driveFieldOriented(driveDirectAngleSim);
 
   Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleSim);
@@ -232,6 +237,8 @@ public class RobotContainer{
 
     // Configure the trigger bindings
     configureBindings();
+    Driver_ConfigureBindings();
+    Assist_ConfigureBindings();
     drivebase.setDefaultCommand(closedAbsoluteDriveAdv);
     // setMotorBrake(false);
   }
@@ -249,77 +256,61 @@ public class RobotContainer{
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick
    * Flight joysticks}.
    */
-  private void configureBindings(){
-    new JoystickButton(Drive_Ctrl, 2).onTrue(CMD_AutoPath);
-    new JoystickButton(Drive_Ctrl, 1).onTrue(CMD_AutoDriveToBarge);
-    new JoystickButton(Drive_Ctrl, 3).onTrue(CMD_AutoToReef);
-    new JoystickButton(Drive_Ctrl, 4).whileTrue(CMD_AutoDriveOneMeter);
-    new JoystickButton(Drive_Ctrl, 5).whileTrue(CMD_DriveToReef18);
-    new JoystickButton(Drive_Ctrl, 6).onTrue(new InstantCommand(drivebase::setPOS));
-
-    // new JoystickButton(Drive_Ctrl, 1).onTrue(new InstantCommand(algae::Intake_out).alongWith(new WaitCommand(0.5).andThen(new InstantCommand(algae::Stop))));
-    // new JoystickButton(Drive_Ctrl, 2).onTrue(new InstantCommand(algae::Intake_back).alongWith(new WaitCommand(0.5).andThen(new InstantCommand(algae::Stop))));
-    // new JoystickButton(Drive_Ctrl, 3).whileTrue(new InstantCommand(algae::suck)).onFalse(new InstantCommand(algae::Stop));
-    // new JoystickButton(Drive_Ctrl, 4).whileTrue(new InstantCommand(algae::shoot)).onFalse(new InstantCommand(algae::Stop));
-
-    // Algae
-    new JoystickButton(Ctrl, 1).whileTrue(new InstantCommand(arm::Arm_DOWN)).onFalse(new InstantCommand(arm::Arm_Stop));
-    new JoystickButton(Ctrl, 2).whileTrue(new InstantCommand(arm::Arm_UP)).onFalse(new InstantCommand(arm::Arm_Stop));
-
-    // Reef
-    // new JoystickButton(Ctrl, 3).onTrue(CMD_RL1);
-    // new JoystickButton(Ctrl, 4).onTrue(CMD_RL2);
-    // new JoystickButton(Ctrl, 5).onTrue(CMD_RL3);
-
-    new JoystickButton(Ctrl, 3).whileTrue(new InstantCommand(elevator::ELE_Down)).onFalse(new InstantCommand(elevator::ELE_Stop));
-    new JoystickButton(Ctrl, 4).whileTrue(new InstantCommand(elevator::ELE_Up)).onFalse(new InstantCommand(elevator::ELE_Stop));
-    // new JoystickButton(Ctrl, 7).onTrue(new InstantCommand(elevator::ELE_Floor));
-    
-    new JoystickButton(Ctrl, 5).onTrue(new InstantCommand(coral::Coral_Suck)).onFalse(new InstantCommand(coral::Coral_Stop));
-    // Coral 
-    new JoystickButton(Ctrl, 6).whileTrue(new InstantCommand(coral::Coral_Shoot)).onFalse(new InstantCommand(coral::Coral_Stop));
-
-    // new JoystickButton(test, 2).onTrue(new InstantCommand(algae::Intake_back).alongWith(new WaitCommand(0.5).andThen(new InstantCommand(algae::Stop))));
-    
-    new POVButton(Ctrl, 0).whileTrue(new InstantCommand(arm::Arm_UP)).onFalse(new InstantCommand(arm::Arm_Stop));
-    new POVButton(Ctrl, 180).whileTrue(new InstantCommand(arm::Arm_DOWN)).onFalse(new InstantCommand(arm::Arm_Stop));
-
-    // new Trigger(Ctrl.axisGreaterThan(3, .1, null)).onTrue(CMD_DriveToReef18).onFalse(CMD_DriveToCoralStation);
-
-    /*
-    // Driver
-    new JoystickButton(PS5, 1).onTrue(new InstantCommand(algae::Intake_out).alongWith(new WaitCommand(0.5).andThen(new InstantCommand(algae::Stop))));
-    new JoystickButton(PS5, 2).onTrue(new InstantCommand(algae::Intake_back).alongWith(new WaitCommand(0.5).andThen(new InstantCommand(algae::Stop))));
-
-    new JoystickButton(PS5, 3).onTrue(CMD_Climb);
-    new JoystickButton(PS5, 4).onTrue(CMD_SetZero);
-
-    new JoystickButton(PS5, 5).onTrue(new InstantCommand(coral::Coral_Suck)).onFalse(new InstantCommand(coral::Coral_Stop));
-    new JoystickButton(PS5, 6).whileTrue(new InstantCommand(coral::Coral_Shoot)).onFalse(new InstantCommand(coral::Coral_Stop));
-
-    new JoystickButton(PS5, 7).onTrue(CMD_Algae_Intake);
-    new JoystickButton(PS5, 8).onTrue(CMD_Algae_Intake);
-
-    new JoystickButton(PS5, 14).onTrue(new InstantCommand(drivebase::setHead));
-
-    new POVButton(PS5, 0).onTrue(CMD_RL1);
-    new POVButton(PS5, 90).onTrue(CMD_RL2);
-    new POVButton(PS5, 180).onTrue(CMD_RL3);
-    new POVButton(PS5, 270).onTrue(CMD_RL4);
-
-    // Assist
-    new JoystickButton(Ctrl, 1).onTrue(new InstantCommand(arm::Arm_Coral_RL1));    // 1
-    new JoystickButton(Ctrl, 2).onTrue(new InstantCommand(arm::Arm_Coral_RL2));    // 2
-    new JoystickButton(Ctrl, 3).onTrue(new InstantCommand(arm::Arm_Coral_RL4));    // 3
-    new JoystickButton(Ctrl, 4).onTrue(new InstantCommand(arm::Arm_Coral_Sation)); // 4
-
-    new JoystickButton(Ctrl, 8).onTrue(new InstantCommand(arm::Arm_Coral_DOWN));   // 8
-
-    new JoystickButton(Ctrl, 5).whileTrue(new InstantCommand(elevator::ELE_Down)).onFalse(new InstantCommand(elevator::ELE_Stop));
-    new JoystickButton(Ctrl, 6).whileTrue(new InstantCommand(elevator::ELE_Up)).onFalse(new InstantCommand(elevator::ELE_Stop));
-    new JoystickButton(Ctrl, 7).onTrue(new InstantCommand(elevator::ELE_Floor));
   
-    */
+   // XBOX For XBR
+
+   // PS5 For Jay
+  private void Driver_ConfigureBindings(){ 
+
+    new JoystickButton(Driver_Ctrl, 1).onTrue(new InstantCommand(algae::Algae_out));
+    new JoystickButton(Driver_Ctrl, 2).whileTrue(new InstantCommand(algae::Algae_back)).onFalse(new InstantCommand(algae::Algae_Stop));
+
+    new JoystickButton(Driver_Ctrl, 3).whileTrue(new InstantCommand(climber::Up)).onFalse(new InstantCommand(climber::Stop));
+    new JoystickButton(Driver_Ctrl, 4).whileTrue(new InstantCommand(climber::Down)).onFalse(new InstantCommand(climber::Stop));
+
+    new JoystickButton(Driver_Ctrl, 5).whileTrue(new InstantCommand(algae::suck)).onFalse(new InstantCommand(algae::Stop));
+    new JoystickButton(Driver_Ctrl, 6).whileTrue(new InstantCommand(algae::shoot)).onFalse(new InstantCommand(algae::Stop));
+
+    new JoystickButton(Driver_Ctrl, 7).whileTrue(new InstantCommand(coral::Coral_Suck)).onFalse(new InstantCommand(coral::Coral_Stop));
+    new JoystickButton(Driver_Ctrl, 8).whileTrue(new InstantCommand(coral::Coral_Shoot)).onFalse(new InstantCommand(coral::Coral_Stop));
+
+    new JoystickButton(Driver_Ctrl, 9).onTrue(new InstantCommand(drivebase::setClimberAsHead));
+
+    new POVButton(Driver_Ctrl, 0).onTrue(new InstantCommand(elevator::ELE_RL1).alongWith(new InstantCommand(arm::Arm_RL1)));
+    new POVButton(Driver_Ctrl, 90).onTrue(new InstantCommand(elevator::ELE_RL2).alongWith(new InstantCommand(arm::Arm_RL2)));
+    new POVButton(Driver_Ctrl, 180).onTrue(new InstantCommand(elevator::ELE_RL3).alongWith(new InstantCommand(arm::Arm_RL3)));
+    new POVButton(Driver_Ctrl, 270).onTrue(new InstantCommand(elevator::ELE_RL4).alongWith(new InstantCommand(arm::Arm_RL4)));   
+  }
+
+   private void Assist_ConfigureBindings(){
+    // new JoystickButton(Assist_Ctrl, 1).onTrue(new InstantCommand(climber::Climb));
+    new JoystickButton(Assist_Ctrl, 1).onTrue(new InstantCommand(elevator::test)).onFalse(new InstantCommand(elevator::ELE_Stop));
+    new JoystickButton(Assist_Ctrl, 2).whileTrue(new InstantCommand(climber::Up)).onFalse(new InstantCommand(climber::Stop));
+    new JoystickButton(Assist_Ctrl, 3).whileTrue(new InstantCommand(climber::Down)).onFalse(new InstantCommand(climber::Stop));
+    
+    new JoystickButton(Assist_Ctrl, 4).onTrue(new InstantCommand(elevator::ELE_Floor).alongWith(new InstantCommand(arm::Arm_Zero)).alongWith(new InstantCommand(algae::Algae_In)));
+
+    new JoystickButton(Assist_Ctrl, 5).onTrue(new InstantCommand(arm::Arm_Station));
+
+    // new POVButton(Assist_Ctrl, 0).whileTrue(new InstantCommand(elevator::ELE_Up)).onFalse(new InstantCommand(elevator::ELE_Stop));
+    // new POVButton(Assist_Ctrl, 180).whileTrue(new InstantCommand(elevator::ELE_Down)).onFalse(new InstantCommand(elevator::ELE_Stop));
+    // new POVButton(Assist_Ctrl, 90).whileTrue(new InstantCommand(arm::Arm_UP)).onFalse(new InstantCommand(arm::Arm_Stop));
+    // new POVButton(Assist_Ctrl, 270).whileTrue(new InstantCommand(arm::Arm_DOWN)).onFalse(new InstantCommand(arm::Arm_Stop));
+    new POVButton(Assist_Ctrl, 0).onTrue(new InstantCommand(elevator::ELE_Up));
+    new POVButton(Assist_Ctrl, 180).onTrue(new InstantCommand(elevator::ELE_Down));
+    new POVButton(Assist_Ctrl, 90).onTrue(new InstantCommand(arm::Arm_UP));
+    new POVButton(Assist_Ctrl, 270).onTrue(new InstantCommand(arm::Arm_DOWN));
+  }
+   
+
+  private void configureBindings(){
+    // new JoystickButton(PS5, 1).whileTrue(new InstantCommand(climber::Up)).onFalse(new InstantCommand(climber::Stop));
+    // new JoystickButton(PS5, 2).whileTrue(new InstantCommand(climber::Down)).onFalse(new InstantCommand(climber::Stop));
+    // new JoystickButton(Driver_Ctrl, 1).onTrue(new InstantCommand(algae::Algae_out));
+    // new JoystickButton(Driver_Ctrl, 2).whileTrue(new InstantCommand(algae::Algae_back)).onFalse(new InstantCommand(algae::Algae_Stop));
+    // new JoystickButton(Driver_Ctrl, 3).whileTrue(new InstantCommand(algae::suck)).onFalse(new InstantCommand(algae::Stop));
+
+    // new JoystickButton(PS5, 3).whileTrue(new InstantCommand(coral::Coral_Shoot)).onFalse(new InstantCommand(coral::Coral_Stop));
 
     // (Condition) ? Return-On-True :
 
@@ -327,7 +318,7 @@ public class RobotContainer{
     drivebase.setDefaultCommand(
         !RobotBase.isSimulation() ? driveFieldOrientedDirectAngle : driveFieldOrientedDirectAngleSim);
 
-    // if (Robot.isSimulation()) {
+    if (Robot.isSimulation()) {
       // driverXbox.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
     // }
     // if (DriverStation.isTest()) {
@@ -357,7 +348,7 @@ public class RobotContainer{
       // new JoystickButton(test, 6).whileTrue(drivebase.driveToPose(((vision.getTagPose()))));
       // new JoystickButton(test, 6).whileTrue(drivebase.driveToPose(new Pose2d(15.464, 7.352, Units.degreesToRadians(3.180))));
       // new JoystickButton(PS5, 0).whileTrue(drivebase.driveToPose(new Pose2d(15, 7, 3.18)));
-      // }
+      }
   }
 
   /**
@@ -367,8 +358,8 @@ public class RobotContainer{
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    // return null;
-    return CMD_DriveToReef18;
+    return null;
+    // return CMD_Follow;
             // .andThen(
             //   Commands.runOnce(() -> drivebase.drive(new ChassisSpeeds(0, 0, 0)), 
             //   drivebase
@@ -377,9 +368,12 @@ public class RobotContainer{
 
   public void setDriveMode() {
     configureBindings();
+    Driver_ConfigureBindings();
+    Assist_ConfigureBindings();
   }
 
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
   }
 }
+

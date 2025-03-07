@@ -25,7 +25,7 @@ public class AutoDriveOneMeter extends Command{
         addRequirements(this.swerve);
         try {
             path = PathPlannerPath.fromPathFile("one_meter");
-            swerve.getSwerveDrive().resetOdometry(new Pose2d(2, 2, Rotation2d.fromDegrees(0)));
+            swerve.getSwerveDrive().resetOdometry(new Pose2d(7.5, 7, Rotation2d.fromDegrees(0)));
         } catch (FileVersionException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -40,12 +40,12 @@ public class AutoDriveOneMeter extends Command{
     }
     @Override
     public void execute(){
-        Commands.runOnce( () -> swerve.resetOdometry(new Pose2d(2, 2, Rotation2d.fromDegrees(0))), swerve);
-        // Commands.runOnce( () -> swerve.driveToPose(new Pose2d(3, 2, Rotation2d.fromDegrees(0))), swerve);
+        swerve.getSwerveDrive().resetOdometry(new Pose2d(7.5, 7, Rotation2d.fromDegrees(0)));
+        Commands.runOnce( () -> swerve.driveToPose(new Pose2d(5.5, 7, Rotation2d.fromDegrees(0))), swerve);
         // swerve.driveToPose(new Pose2d(1, 0, Rotation2d.fromDegrees(0)));
         // swerve.driveToPose(new Pose2d(0, 1, Rotation2d.fromDegrees(0)));
 
-        Commands.runOnce( () -> AutoBuilder.followPath(path) );
+        // Commands.runOnce( () -> AutoBuilder.followPath(path));
     }
 
     @Override

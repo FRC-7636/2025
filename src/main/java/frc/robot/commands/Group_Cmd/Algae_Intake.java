@@ -13,10 +13,6 @@ public class Algae_Intake extends Command{
     }
     
     public void excute(){
-        algae.Intake_out();
-        algae.suck();
-        new WaitCommand(0.3);
-
-        algae.Stop();
+        algae.Algae_out();
     }
 }

@@ -12,11 +12,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.PoseEstimate;
-import frc.robot.Constants.LimelightConstants;
 
-public class limelight extends SubsystemBase{
-    NetworkTable table = NetworkTableInstance.getDefault().getTable(LimelightConstants.LL1);
-    NetworkTable table2 = NetworkTableInstance.getDefault().getTable(LimelightConstants.LL2);
+ public class limelight extends SubsystemBase{
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("");
+    NetworkTable table2 = NetworkTableInstance.getDefault().getTable("limelight-two");
 
     public Field2d LL_Pose;
     public static AprilTagFieldLayout aprilTagFieldLayout;
@@ -63,7 +62,6 @@ public class limelight extends SubsystemBase{
     // public Pose2d getLLPose(){
     //     PoseEstimate megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
     //     PoseEstimate megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-two");
-
 
     //     if(megatag.tagCount < 1 && megatag2.tagCount < 1){
     //         return avgPose = getRobotPose_two().toPose2d();

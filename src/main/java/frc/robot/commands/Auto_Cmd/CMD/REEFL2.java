@@ -21,10 +21,5 @@ public class REEFL2 extends Command {
     public void excute(){
         elevator.ELE_RL2();
         arm.Arm_RL2();
-        
-        if(coral.CoarlDetected()){
-            arm.Arm_Station();
-            elevator.ELE_Floor();
-        }
-        }
+    }
 }

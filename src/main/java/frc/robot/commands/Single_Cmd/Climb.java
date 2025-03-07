@@ -12,6 +12,6 @@ public class Climb extends Command{
     }
 
     public void excute(){
-        climber.Climb();
+        climber.Climb_Zero();
     }
 }

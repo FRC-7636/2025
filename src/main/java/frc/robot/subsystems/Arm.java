@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
-import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
-
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -20,10 +19,10 @@ public class Arm extends SubsystemBase{
 
     private final CANcoder Arm_Encoder = new CANcoder(ArmConstants.Arm_Encoder_ID, "mech");
 
-    private double Arm_Pos = 0;
     private double LastPos = 0;
     private int rotation = 0;
 
+    
     public Arm(){
         var Arm_Motor_Config = Arm_Motor.getConfigurator();
 
@@ -39,9 +38,6 @@ public class Arm extends SubsystemBase{
         Arm_Motor_Config.apply(new MotionMagicConfigs()
                 .withMotionMagicAcceleration(ArmConstants.MAX_ACCEL)
                 .withMotionMagicCruiseVelocity(ArmConstants.MAX_VELOCITY));
-
-        // Sets the mechanism position of the device in mechanism rotations.
-        Arm_Motor_Config.setPosition(0);
         
         // Arm PIDConfig
         Slot0Configs Arm_PIDConfig = new Slot0Configs();
@@ -56,10 +52,6 @@ public class Arm extends SubsystemBase{
         return Arm_Encoder.getAbsolutePosition().getValueAsDouble();
         // return Arm_Motor.getPosition().getValueAsDouble();
     }
-
-    // public double getstat(){
-    //     return Arm_Motor.
-    // }
 
     // Arm 
     public void Arm_Zero(){
@@ -79,7 +71,7 @@ public class Arm extends SubsystemBase{
     }
 
     public void Arm_RL2(){
-        Arm_Motor.setControl(new MotionMagicDutyCycle(25));
+        Arm_Motor.setControl(new MotionMagicDutyCycle(ArmConstants.Arm_RL2));
     }
 
     public void Arm_RL3(){
@@ -91,15 +83,21 @@ public class Arm extends SubsystemBase{
     }
 
     public void Arm_DOWN(){
-        Arm_Motor.set(-0.3);
+        double pos = Arm_Encoder.getPosition().getValueAsDouble();
+        Arm_Motor.setControl(new MotionMagicDutyCycle(pos-0.05));
     }
 
     public void Arm_UP(){
-        Arm_Motor.set(0.3);
+        double pos = Arm_Encoder.getPosition().getValueAsDouble();
+        Arm_Motor.setControl(new MotionMagicDutyCycle(pos+0.05));
     }
 
     public void Arm_Stop(){
         Arm_Motor.set(0);
+    }
+
+    public void Arm_Stay(double POS){
+        Arm_Motor.setControl(new MotionMagicDutyCycle(POS));
     }
 
     @Override
@@ -107,13 +105,23 @@ public class Arm extends SubsystemBase{
         getArmPos();
         SmartDashboard.putNumber("Arm_Pos", getArmPos());
 
-        double currentPos = (Arm_Encoder.getAbsolutePosition().getValueAsDouble());
-        if (LastPos - currentPos >= 0.1) {
-            rotation++;
-        } else if (LastPos - currentPos <= -0.1) {
-            rotation--;
-        }
-        LastPos = (Arm_Encoder.getAbsolutePosition().getValueAsDouble()) ;
-        SmartDashboard.putNumber("Arm_Calculated", (currentPos + rotation));
+    //     double currentPos = (Arm_Encoder.getAbsolutePosition().getValueAsDouble()) * 180;
+    //     if (LastPos - currentPos >= 85) {
+    //         rotation++;
+    //     } 
+    //     else if (LastPos - currentPos <= -85) {
+    //         rotation--;
+    //     }
+
+    //     if(Arm_Encoder.getAbsolutePosition().getValueAsDouble() < 0){
+    //         currentPos = (0.5 - Math.abs(Arm_Encoder.getAbsolutePosition().getValueAsDouble())) * 180;
+    //     }
+
+    //     if(currentPos + (rotation * 90) > 175){
+    //         currentPos = 90 + (Arm_Encoder.getAbsolutePosition().getValueAsDouble() * 180);
+    //     }
+        
+    //     LastPos = (Arm_Encoder.getAbsolutePosition().getValueAsDouble()) * 180;
+    //     SmartDashboard.putNumber("Arm_Calculated", (currentPos + (rotation * 90)));
     }
 }

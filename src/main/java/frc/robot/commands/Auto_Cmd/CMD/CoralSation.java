@@ -22,12 +22,6 @@ public class CoralSation extends Command{
         arm.Arm_Station();
         new WaitCommand(0.1);
         coral.Coral_Suck();
-        
-        if(!coral.CoarlDetected()){
-            coral.Coral_Stop();
-            arm.Arm_StartUp();
-            elevator.ELE_Floor();
-        }
     }
     
 }

@@ -6,6 +6,7 @@ package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
@@ -59,6 +60,7 @@ import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
 import swervelib.math.SwerveMath;
+import swervelib.parser.PIDFConfig;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
@@ -81,7 +83,7 @@ public class SwerveSubsystem extends SubsystemBase{
   /**
    * Enable vision odometry updates while driving.
    */
-  private final boolean visionDriveTest = true;
+  private final boolean visionDriveTest = false;
  
   // private PIDController drive = new PIDController(0, 0, 0);
   // private PIDController turn = new PIDController(0, 0, 0)
@@ -133,7 +135,7 @@ public class SwerveSubsystem extends SubsystemBase{
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     
     
-                                                swerveDrive.updateCacheValidityPeriods(15, 15, 15);
+    swerveDrive.updateCacheValidityPeriods(15, 15, 15);
     swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
     // swerveDrive.chassisVelocityCorrection(true);
     if (visionDriveTest){
@@ -163,7 +165,7 @@ public class SwerveSubsystem extends SubsystemBase{
                                                                Rotation2d.fromDegrees(0)));
   }
   
-  public void setHead() {
+  public void setClimberAsHead() {
     swerveDrive.setGyro(new Rotation3d(0, 0, Math.PI));
   }
 
@@ -236,24 +238,36 @@ public class SwerveSubsystem extends SubsystemBase{
     // resetOdometry(new Pose2d(0.901, 4.031, Rotation2d.fromDegrees(0)));
       resetOdometry(LimelightHelpers.getBotPose2d_wpiBlue("limelight-two"));
   }
+
+  private void fixFRDrive() {
+    swervelib.SwerveModule[] modules = swerveDrive.getModules();
+      for (swervelib.SwerveModule module:modules) {
+        if (module.moduleNumber == 1) {
+          swervelib.SwerveModule frModule = module;
+
+          frModule.setDrivePIDF(new PIDFConfig(10, 0, -0.2, 0));  // 需要手動填入PIDF，F填負值？沒試過w
+        }
+      }
+  }
   
   @Override
   public void periodic(){
-    LimelightHelpers.getOrientation(swerveDrive);
+    // fixFRDrive();
+    // LimelightHelpers.getOrientation(swerveDrive);
 
-    // When vision is enabled we must manually update odometry in SwerveDrive
-    if (visionDriveTest)
-    {
-      swerveDrive.updateOdometry();
-      swerveDrive.imuReadingCache.getValue().getZ();
-      // SmartDashboard.putNumber("imu", swerveDrive.imuReadingCache.getValue().getZ());
+    // // When vision is enabled we must manually update odometry in SwerveDrive
+    // if (visionDriveTest)
+    // {
+    //   swerveDrive.updateOdometry();
+    //   swerveDrive.imuReadingCache.getValue().getZ();
+    //   // SmartDashboard.putNumber("imu", swerveDrive.imuReadingCache.getValue().getZ());
       
-      LimelightHelpers.getOrientation(swerveDrive);
-    }
-    getPose();
-    LimelightHelpers.getOrientation(swerveDrive);
-    Bot_Pose.setRobotPose(getPose());
-    SmartDashboard.putData("Bot_Pose", Bot_Pose);
+    //   LimelightHelpers.getOrientation(swerveDrive);
+    // }
+    // getPose();
+    // LimelightHelpers.getOrientation(swerveDrive);
+    // Bot_Pose.setRobotPose(getPose());
+    // SmartDashboard.putData("Bot_Pose", Bot_Pose);
     // SmartDashboard.putNumber("X", getPose().getX());
     // SmartDashboard.putNumber("Y", getPose().getY());
     // SmartDashboard.putNumber("Rotation", getPose().getRotation().getDegrees());

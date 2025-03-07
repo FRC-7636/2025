@@ -72,13 +72,12 @@ public class Elevator extends SubsystemBase{
         // Encoder.setPosition(0);
         // rotation = 0;
     }
+    public void test(){
+        Left_Motor.set(-0.4);
+        Right_Motor.set(-0.4);
+    }
 
     public double getAbsolutePosition(){
-        // return rotation * 360 + Encoder.getAbsolutePosition().getValueAsDouble();
-        return Right_Motor.getPosition().getValueAsDouble();
-        // return Encoder.getAbsolutePosition().getValueAsDouble();
-    }
-    public double getLEFTAbsolutePosition(){
         // return rotation * 360 + Encoder.getAbsolutePosition().getValueAsDouble();
         return Left_Motor.getPosition().getValueAsDouble();
         // return Encoder.getAbsolutePosition().getValueAsDouble();
@@ -110,12 +109,14 @@ public class Elevator extends SubsystemBase{
     }
 
     public void ELE_Up(){
-        Left_Motor.set(-0.4);
-        Right_Motor.set(-0.4);
+        double pos = Left_Motor.getPosition().getValueAsDouble();
+        Left_Motor.setControl(new MotionMagicDutyCycle(pos-1));
+        Right_Motor.setControl(new MotionMagicDutyCycle(pos-1));
     }
     public void ELE_Down(){
-        Left_Motor.set(0.4);
-        Right_Motor.set(0.4);
+        double pos = Left_Motor.getPosition().getValueAsDouble();
+        Left_Motor.setControl(new MotionMagicDutyCycle(pos+1));
+        Right_Motor.setControl(new MotionMagicDutyCycle(pos+1));
     }
 
     public void ELE_Stop(){
@@ -123,21 +124,19 @@ public class Elevator extends SubsystemBase{
         Right_Motor.set(0);
     }
 
+    public void ELE_Stay(double POS){
+        Left_Motor.setControl(new MotionMagicDutyCycle(POS));
+    }
+
     @Override
     public void periodic(){
-
-        // double currentPos = (Encoder.getAbsolutePosition().getValueAsDouble());
-        // if (LastPos - currentPos >= 0.1) {
-        //     rotation++;
-        // } else if (LastPos - currentPos <= -0.1) {
-        //     rotation--;
+        // if(Left_Motor.getPosition().getValueAsDouble() < -58.5 || Left_Motor.getPosition().getValueAsDouble() > -0.5){
+        //     Left_Motor.set(0);
+        //     Right_Motor.set(0);
         // }
-        // LastPos = (Encoder.getAbsolutePosition().getValueAsDouble()) ;
-        // SmartDashboard.putNumber("Eleva_pos", (currentPos + rotation));
+
         getAbsolutePosition();
-        getLEFTAbsolutePosition();
-        SmartDashboard.putNumber("Eleva_pos", getAbsolutePosition());
-        SmartDashboard.putNumber("Eleva_pos_L", getLEFTAbsolutePosition());
+        SmartDashboard.putNumber("Eleva_pos_L", getAbsolutePosition());
 
     }
 }

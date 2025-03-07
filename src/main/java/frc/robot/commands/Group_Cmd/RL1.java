@@ -22,17 +22,9 @@ public class RL1 extends Command {
         elevator.ELE_RL2();
         arm.Arm_RL2();
 
-        if(coral.CoarlDetected()){
-            arm.Arm_Station();
-            elevator.ELE_Floor();
-        }
-        // new WaitCommand(0.5);
-
-        // coral.Coral_Shoot();
-        // new WaitCommand(0.5);
-
-        // coral.Coral_Stop();
-        // arm.Arm_Coral_Sation();
-        // elevator.ELE_Floor();
+        // if(coral.CoarlDetected()){
+        //     arm.Arm_Station();
+        //     elevator.ELE_Floor();
+        // }
     }
 }

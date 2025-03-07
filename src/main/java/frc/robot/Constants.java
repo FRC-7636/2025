@@ -37,9 +37,10 @@ public final class Constants{
   public static class OperatorConstants{
     
     // Joystick Deadband
-    public static final double DEADBAND        = 0.5;
-    public static final double LEFT_Y_DEADBAND = 0.5;
-    public static final double RIGHT_X_DEADBAND = 0.5;
+    public static final double DEADBAND        = 10000;
+    public static final double LEFT_Y_DEADBAND = 10000;
+    public static final double RIGHT_X_DEADBAND = 10000;
+
     
     public static final double TURN_CONSTANT    = 6;
   }
@@ -64,10 +65,10 @@ public final class Constants{
       }
   }
   
-  public static class LimelightConstants{
-      public static final String LL1 = "limelight";
-      public static final String LL2 = "limelight-two";
-  }
+//   public static class LimelightConstants{
+//       public static final String LL1 = "limelight";
+//       public static final String LL2 = "limelight-two";
+//   }
 
   // Subsystems Constants.
     public static class AlgaeConstants{
@@ -78,9 +79,17 @@ public final class Constants{
         // Algae Config
         public static final boolean Algae_ctrl_Inverted = true;
         public static final boolean Algae_Roller_Inverted = false;
-        public static final double Algae_Ctrl_Longest = 1.3;
-        public static final double Algae_Ctrl_Shortest = 0.0;
-        public static final double Algae_Ctrl_Middle = 0.12;
+
+        public static final double Algae_Zero = 0;
+        public static final double Algae_Out = -2.3;
+        public static final double Algae_In = 0;
+
+        // Algae PIDF
+        public static final double Algae_P = 0.4;
+        public static final double Algae_I = 0;
+        public static final double Algae_D = 0;
+        public static final double Algae_F = 0;        
+        
     }
 
     public static class ArmConstants{
@@ -94,46 +103,43 @@ public final class Constants{
 
         public static final double Arm_Zero = 0;
         public static final double Arm_StartUp = 0;
-        public static final double Arm_Station = 0;
-        public static final double Arm_RL1 = 40;
-        public static final double Arm_RL2 = 40;
-        public static final double Arm_RL3 = 40;
-        public static final double Arm_RL4 = 0;
+        public static final double Arm_Station = 0.2;
+        public static final double Arm_RL1 = 0.23;
+        public static final double Arm_RL2 = 0.24;
+        public static final double Arm_RL3 = 0.18;
+        public static final double Arm_RL4 = 0.2;
 
         public static final double MAX_ACCEL = 500;
         public static final double MAX_VELOCITY = 200;
         
         // Arm PIDF
-        public static final double Arm_P = 0.1;
+        public static final double Arm_P = 0.9;
         public static final double Arm_I = 0;
         public static final double Arm_D = 0;
         public static final double Arm_F = 0;        
-        
-        // Arm Coral PIDF
-        public static final double Arm_Coral_P = 0;
-        public static final double Arm_Coral_I = 0;
-        public static final double Arm_Coral_D = 0;
-        public static final double Arm_Coral_F = 0;
     }
 
     // Climber Constants
     public static class ClimberConstants {
         // Climber ID
-        public static final int LeftMotor_ID = 41;
+        public static final int Climb_Motor = 41;
 
-        public static final int Encoder_ID = 43;
-        
+   
         // Climber Config
         public static final boolean LeftMotor_Inverted = false;
         public static final boolean RightMotor_Inverted = false;
-        public static final double Climb_Angle = 0;
+        public static final double Climb_Angle = -182;
         public static final double Climb_Zero = 0;
+        public static final double Climb_StartUp = -24;
 
         // Climber PIDF
         public static final double P = 0;
         public static final double I = 0;
         public static final double D = 0;
         public static final double F = 0;
+
+        public static final double MAX_ACCEL = 1000;
+        public static final double MAX_VELOCITY = 400;
     }
 
     // Elevator Constants
@@ -150,25 +156,24 @@ public final class Constants{
 
         public static final double floor = 0;
         public static final double L1 = 0;
-        public static final double L2 = 24;
-        public static final double L3 = 31;
-        public static final double L4 = 61;
+        public static final double L2 = -15;
+        public static final double L3 = -26;
+        public static final double L4 = -54;
+
 
         public static final double MAX_ACCEL = 1000;
         public static final double MAX_VELOCITY = 400;
 
         // Elevator PIDF
-        public static final double P = 0.5;
+        public static final double P = 0.1;
         public static final double I = 0;
-        public static final double D = 0.01;
+        public static final double D = 0;
         public static final double F = 0;
     }
 
     public static class CoralConstants{
         // Coral ID
         public static final int Coral_Motor_ID = 61;
-        public static final int Arm_Left_Motor = 62;
-        public static final int Arm_Right_Motor = 63;
 
         public static final int Coral_Sensor_ID = 0;
 

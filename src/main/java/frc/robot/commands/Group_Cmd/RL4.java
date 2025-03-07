@@ -1,5 +1,6 @@
 package frc.robot.commands.Group_Cmd;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
@@ -19,10 +20,11 @@ public class RL4 extends Command {
     public void excute(){
         elevator.ELE_RL4();
         arm.Arm_RL4();
+        new WaitCommand(0.1);
         
-        if(coral.CoarlDetected()){
-            arm.Arm_Station();
-            elevator.ELE_Floor();
-        }
+        // if(coral.CoarlDetected()){
+        //     arm.Arm_Station();
+        //     elevator.ELE_Floor();
+        // }
         }
 }

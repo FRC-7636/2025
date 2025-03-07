@@ -13,12 +13,12 @@ public class Algae_Release extends Command{
     }
 
     public void excute(){
-        algae.Intake_out();
+        algae.Algae_out();
         algae.shoot();
         new WaitCommand(0.5);
 
         algae.Stop();
-        algae.Intake_back();
+        algae.Algae_In();
     }
     
 }
